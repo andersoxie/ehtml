@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-13-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-13-0 http://www.eiffel.com/developers/xml/configuration-1-13-0.xsd" name="ehtml" uuid="C9115044-F077-4061-8F1E-9AD9E5521EE4">
+	<description>Eiffel HTML Library</description>
+	<target name="ehtml">
+		<root all_classes="true"/>
+		<version major="1" minor="0" release="0" build="1"/>
+		<file_rule>
+			<exclude>/EIFGENs$</exclude>
+			<exclude>/CVS$</exclude>
+			<exclude>/.svn$</exclude>
+			<exclude>/.git$</exclude>
+			<exclude>/tests$</exclude>
+		</file_rule>
+		<option warning="true" void_safety="transitional">
+			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
+		</option>
+		<library name="base" location="$ISE_LIBRARY\library\base\base-safe.ecf"/>
+		<cluster name="ehtml" location=".\" recursive="true"/>
+	</target>
+	<target name="test" extends="ehtml">
+		<root class="APPLICATION" feature="make"/>
+		<file_rule>
+			<exclude>/EIFGENs$</exclude>
+			<exclude>/CVS$</exclude>
+			<exclude>/.svn$</exclude>
+		</file_rule>
+		<library name="test_set_helper" location="C:\Users\Larry_2\Documents\GitHub\test_set_helper\test_set_helper.ecf"/>
+		<library name="testing" location="$ISE_LIBRARY\library\testing\testing-safe.ecf"/>
+		<cluster name="tests" location=".\tests\" recursive="true"/>
+	</target>
+</system>
