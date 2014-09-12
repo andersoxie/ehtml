@@ -112,6 +112,60 @@ feature -- Access
 	content_editable_identifier: STRING = "contenteditable"
 			-- Identifier constants for `content_editable_attribute'.
 
+	data_attribute (a_key: STRING): STRING
+			-- Well formed HTML "data=*" global attribute.
+		note
+			how: "[
+				By returning either an empty string, indicative of detached `class_attribute_value' or a 
+				fully formed class attribute in accordance with HTML5 specifications.
+				]"
+			EIS: "name=class attribute", "src=http://www.w3schools.com/tags/att_global_data.asp", "protocol=URI"
+			examples: "[
+				Syntax: <element data-*="somevalue">
+				
+				Retrieve from this list by: Current.data_attributes ["animal-type-bird"] from: item alias "[]" (key: K): detachable G
+				]"
+		require
+			has_key_value: data_attributes.has (a_key)
+		do
+			check has_value: attached {like data_attribute_value_anchor} data_attributes [a_key] as al_value then
+				Result := well_formed_html_attribute (data_identifier + al_value.attribute_name, al_value.attribute_value, is_double_quoted)
+			end
+		end
+
+	data_attributes: HASH_TABLE [TUPLE [STRING, STRING], STRING]
+			-- Hash of data attributes, name and value (key-value pairs).
+		note
+			purpose: "[
+				The data-* attributes is used to store custom data private to the page or application.
+				The data-* attributes gives us the ability to embed custom data attributes on all HTML elements.
+				
+				The stored (custom) data can then be used in the page's JavaScript to create a more engaging user 
+				experience (without any Ajax calls or server-side database queries).
+				
+				The data-* attributes consist of two parts:
+				
+				1. The attribute name should not contain any uppercase letters, and must be at least one character long
+				after the prefix "data-"
+				2. The attribute value can be any string
+				
+				Note: Custom attributes prefixed with "data-" will be completely ignored by the user agent [g].
+				]"
+			examples: "[
+				Retrieve from this list by: Current.data_attributes ["animal-type-bird"] from: item alias "[]" (key: K): detachable G
+			glossary: "[
+				user agent: In computing, a user agent is software (a software agent) that is acting on behalf 
+								of a user. For example, an email reader is a mail user agent, and in the Session 
+								Initiation Protocol (SIP), the term user agent refers to both end points of a 
+								communications session.
+				]"
+		attribute
+			create Result.make (0)
+		end
+
+	data_identifier: STRING = "data-"
+			-- Identifier constants for `data_attribute'.
+
 feature -- Status Report: Contract Support
 
 	frozen is_valid_attribute_value (a_value: STRING): BOOLEAN
@@ -177,6 +231,18 @@ feature -- Settings
 			content_editable_attribute_value := False
 		end
 
+	set_data_attribute (a_value: attached like data_attribute_value_anchor; a_key: STRING)
+			-- Set `a_value' and `a_key' into `data_attributes'.
+		do
+			data_attributes.force (a_value, a_key)
+		ensure
+			has_entry: attached {attached like data_attribute_value_anchor} data_attributes.at (a_key) as al_value and then
+						al_value.attribute_name.same_string (a_value.attribute_name) and then
+						al_value.attribute_value.same_string (a_value.attribute_value)
+		end
+
+	data_attribute_value_anchor: detachable TUPLE [attribute_name, attribute_value: STRING]
+
 feature {NONE} -- Implementation: Basic Operations
 
 	well_formed_html_attribute (a_name, a_value: STRING; a_is_quoted: BOOLEAN): STRING
@@ -212,5 +278,10 @@ feature {NONE} -- Implementation: Constants
 invariant
 	valid_class_attribute_value: attached class_attribute_value as al_value implies is_valid_attribute_value (al_value)
 	valid_access_key_attribute_value: attached access_key_attribute_value as al_value implies is_valid_attribute_value (al_value)
+	valid_data_values: data_attributes.count > 0 implies
+						across data_attributes as ic_data all
+							attached {like data_attribute_value_anchor} ic_data.item as al_data and then
+								is_valid_attribute_value (al_data.attribute_value)
+						end
 
 end

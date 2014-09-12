@@ -78,6 +78,12 @@ feature -- Test routines
 			assert_strings_equal ("access_key_attribute", "accesskey=%"h%"", l_test.access_key)
 			l_test.set_content_editable_attribute_value (True)
 			assert_strings_equal ("access_key_attribute", "contenteditable=%"true%"", l_test.content_editable_attribute)
+			l_test.set_data_attribute (["attribute-type", "bird"], "attribute_type_bird")
+			l_test.set_data_attribute (["attribute-type", "fish"], "attribute_type_fish")
+			l_test.set_data_attribute (["attribute-type", "spider"], "attribute_type_spider")
+			assert_strings_equal ("attribute_type_bird", "data-attribute-type=%"bird%"", l_test.data_attribute ("attribute_type_bird"))
+			assert_strings_equal ("attribute_type_fish", "data-attribute-type=%"fish%"", l_test.data_attribute ("attribute_type_fish"))
+			assert_strings_equal ("attribute_type_spider", "data-attribute-type=%"spider%"", l_test.data_attribute ("attribute_type_spider"))
 		end
 
 feature {NONE} -- Implementation
