@@ -17,7 +17,7 @@ deferred class
 feature -- Access
 
 	class_attribute: STRING
-			-- HTML "class" global attribute.
+			-- Well formed HTML "class" global attribute.
 		note
 			how: "[
 				By returning either an empty string, indicative of detached `class_attribute_value'
@@ -25,18 +25,13 @@ feature -- Access
 				]"
 			EIS: "name=class attribute", "src=http://www.w3schools.com/tags/att_global_class.asp", "protocol=URI"
 		do
-			create Result.make_empty
-			if has_class_attribute_value then
-				Result.append_string ("class=%"")
-				check attached class_attribute_value end
-				Result.append_string (class_attribute_value)
-				Result.append_character ('"')
-			else
+			check attached class_attribute_value as al_value then
+				Result := well_formed_html_attribute ("class", al_value, is_double_quoted)
 			end
 		end
 
 	class_attribute_value: detachable STRING
-			-- HTML "class" global attribute value (optional).
+			-- HTML "class" global attribute value (optional). See `class_attribute' above and setter/reset below.
 
 feature -- Status Report
 
@@ -44,7 +39,11 @@ feature -- Status Report
 			-- Does Current have optional `class_attribute_value'?
 		do
 			Result := attached class_attribute_value
+		ensure
+			valid_result: Result implies attached class_attribute_value
 		end
+
+feature -- Status Report: Contract Support
 
 	frozen is_valid_attribute_value (a_value: STRING): BOOLEAN
 			-- Is `a_value' a valid attribute value?
@@ -73,6 +72,44 @@ feature -- Settings
 			class_attribute_value := a_class_attribute_value
 		ensure
 			class_attribute_value_set: class_attribute_value = a_class_attribute_value
+		end
+
+	reset_class_attribute_value
+			-- Resets `class_attribute_value' to Void.
+		do
+			class_attribute_value := Void
+		end
+
+feature {NONE} -- Implementation: Basic Operations
+
+	well_formed_html_attribute (a_name, a_value: STRING; a_is_quoted: BOOLEAN): STRING
+			-- Create well-formed attribute with `a_name', equal ("=") to `a_value', with possible double quotes.
+		require
+			has_name: not a_name.is_empty
+			has_value: not a_value.is_empty
+		do
+			Result := a_name
+			Result.append_character ('=')
+			if a_is_quoted then
+				Result.append_character ('"')
+			end
+			Result.append_string (a_value)
+			if a_is_quoted then
+				Result.append_character ('"')
+			end
+		ensure
+			has_name_equal: Result.has_substring (a_name + "=")
+			has_value: Result.has_substring (a_value)
+			is_valid_quotations: a_is_quoted implies Result.has_substring ("%"" + a_value + "%"")
+			has_equality_symbol: Result.has ('=')
+		end
+
+feature {NONE} -- Implementation: Constants
+
+	frozen is_double_quoted: BOOLEAN
+			-- Named BOOLEAN constant indicative of some item wrapped in double-quotes.
+		once
+			Result := {HTML_CONSTANTS}.is_double_quoted
 		end
 
 invariant

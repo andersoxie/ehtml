@@ -23,4 +23,9 @@ feature -- Constants
 	special_characters: STRING = "-_"
 			-- Miscellaneous special characters.
 
+feature -- Constants: Named Boolean Operators
+
+	is_double_quoted: BOOLEAN = True
+			-- When something must be wrapped in double-quotes.
+
 end
