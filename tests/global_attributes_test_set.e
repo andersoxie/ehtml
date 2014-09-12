@@ -70,21 +70,9 @@ feature -- Test routines
 					]"
 		local
 			l_test: TEST_ELEMENT
-			l_misc: TUPLE [INTEGER, STRING, ARRAY [ANY]]
-			l_array: ARRAYED_LIST [INTEGER]
 		do
 			create l_test										-- Test of creation and post-creation invariant.
 			l_test.set_class_attribute_value ("Test_Class-1")	-- Test of invariant, post-setting of "class" attribute.
---			l_misc.item (1)
---			l_misc [1]
-			create l_misc
-			l_misc [1] := 50
-			l_misc [2] := "Bugs"
-			l_misc [3] := <<1, 2, 3>>
-			create l_array.make_from_array (<<1, 2, 3>>)
-			if attached (l_misc @ 1) as al_value then
-				print (al_value.out)
-			end
 		end
 
 feature {NONE} -- Implementation
