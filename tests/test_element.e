@@ -1,6 +1,13 @@
 note
-	description: "Summary description for {TEST_ELEMENT}."
-	author: ""
+	description: "[
+		Representation of an HTML Element for testing purposes.
+		]"
+	how: "[
+		By providing a generic (unspecified) element, representing all elements with
+			global attributes and then using Current to test notions found in the
+			HTML_GLOBAL_ELEMENTs and others (as required).
+		]"
+	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
 
