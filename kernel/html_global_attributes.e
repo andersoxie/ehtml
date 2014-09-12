@@ -16,32 +16,101 @@ deferred class
 
 feature -- Access
 
+	access_key: STRING
+			-- Well formed HTML "accesskey" global attribute.
+		note
+			purpose: "[
+				The accesskey attribute specifies a shortcut key to activate/focus an element.
+				]"
+			how: "[
+				By returning either an empty string, indicative of detached `access_key_attribute_value'
+				or a fully formed class attribute in accordance with HTML5 specifications.
+				]"
+			EIS: "name=class attribute", "src=http://www.w3schools.com/tags/att_global_accesskey.asp", "protocol=URI"
+		do
+			check attached access_key_attribute_value as al_value then
+				Result := well_formed_html_attribute (access_key_identifier, al_value, is_double_quoted)
+			end
+		end
+
+	access_key_attribute_value: detachable STRING
+			-- HTML "access_key" global attribute value (optional). See `access_key_attribute' above and setter/reset below.
+
+	access_key_identifier: STRING = "accesskey"
+			-- Identifier constants for `access_key'.
+
 	class_attribute: STRING
 			-- Well formed HTML "class" global attribute.
 		note
+			purpose: "[
+				The class attribute specifies one or more classnames for an element.
+				
+				The class attribute is mostly used to point to a class in a style sheet. However, it can also 
+				be used by a JavaScript (via the HTML DOM) to make changes to HTML elements with a specified 
+				class.
+				]"
 			how: "[
 				By returning either an empty string, indicative of detached `class_attribute_value'
 				or a fully formed class attribute in accordance with HTML5 specifications.
+				
+				In HTML5, the class attribute can be used on any HTML element (it will validate on any HTML element. 
+				However, it is not necessarily useful).
+				
+				In HTML 4.01, the class attribute cannot be used with: <base>, <head>, <html>, <meta>, <param>, 
+					<script>, <style>, and <title>.
 				]"
 			EIS: "name=class attribute", "src=http://www.w3schools.com/tags/att_global_class.asp", "protocol=URI"
+			examples: "[
+				Syntax: <element class="classname">
+				]"
 		do
 			check attached class_attribute_value as al_value then
-				Result := well_formed_html_attribute ("class", al_value, is_double_quoted)
+				Result := well_formed_html_attribute (class_identifier, al_value, is_double_quoted)
 			end
 		end
 
 	class_attribute_value: detachable STRING
 			-- HTML "class" global attribute value (optional). See `class_attribute' above and setter/reset below.
 
-feature -- Status Report
+	class_identifier: STRING = "class"
+			-- Identifier constants for `class_attribute'.
 
-	has_class_attribute_value: BOOLEAN
-			-- Does Current have optional `class_attribute_value'?
+	content_editable_attribute: STRING
+			-- Well formed HTML "class" global attribute.
+		note
+			purpose: "[
+				The contenteditable attribute specifies whether the content of an element is editable or not.
+				
+				Note: When the contenteditable attribute is not set on an element, the element will inherit it from its parent.
+				]"
+			how: "[
+				By returning either an empty string, indicative of detached `class_attribute_value'
+				or a fully formed class attribute in accordance with HTML5 specifications.
+				]"
+			EIS: "name=class attribute", "src=http://www.w3schools.com/tags/att_global_contenteditable.asp", "protocol=URI"
+			examples: "[
+				Syntax: <element contenteditable="true|false">
+				
+				Attribute Values
+				====================
+				Value	Description
+				------- ------------------------------------------
+				true	Specifies that the element is editable
+				false	Specifies that the element is not editable
+				]"
+		local
+			l_flag: STRING
 		do
-			Result := attached class_attribute_value
-		ensure
-			valid_result: Result implies attached class_attribute_value
+			l_flag := content_editable_attribute_value.out
+			l_flag.to_lower
+			Result := well_formed_html_attribute (content_editable_identifier, l_flag, is_double_quoted)
 		end
+
+	content_editable_attribute_value: BOOLEAN
+			-- HTML "contenteditable" global attribute value ("false" by default). See `content_editable_attribute' above and setter/reset below.
+
+	content_editable_identifier: STRING = "contenteditable"
+			-- Identifier constants for `content_editable_attribute'.
 
 feature -- Status Report: Contract Support
 
@@ -66,6 +135,20 @@ feature -- Status Report: Contract Support
 
 feature -- Settings
 
+	set_access_key_attribute_value (a_access_key_attribute_value: attached like access_key_attribute_value)
+			-- Sets `access_key_attribute_value' with `a_access_key_attribute_value'.
+		do
+			access_key_attribute_value := a_access_key_attribute_value
+		ensure
+			access_key_attribute_value_set: access_key_attribute_value = a_access_key_attribute_value
+		end
+
+	reset_access_key_attribute_value
+			-- Resets `access_key_attribute_value' to Void.
+		do
+			access_key_attribute_value := Void
+		end
+
 	set_class_attribute_value (a_class_attribute_value: attached like class_attribute_value)
 			-- Sets `class_attribute_value' with `a_class_attribute_value'.
 		do
@@ -80,6 +163,20 @@ feature -- Settings
 			class_attribute_value := Void
 		end
 
+	set_content_editable_attribute_value (a_content_editable_attribute_value: attached like content_editable_attribute_value)
+			-- Sets `content_editable_attribute_value' with `a_content_editable_attribute_value'.
+		do
+			content_editable_attribute_value := a_content_editable_attribute_value
+		ensure
+			content_editable_attribute_value_set: content_editable_attribute_value = a_content_editable_attribute_value
+		end
+
+	reset_content_editable_value
+			-- Resets `content_editable_attribute_value' to Void.
+		do
+			content_editable_attribute_value := False
+		end
+
 feature {NONE} -- Implementation: Basic Operations
 
 	well_formed_html_attribute (a_name, a_value: STRING; a_is_quoted: BOOLEAN): STRING
@@ -88,7 +185,7 @@ feature {NONE} -- Implementation: Basic Operations
 			has_name: not a_name.is_empty
 			has_value: not a_value.is_empty
 		do
-			Result := a_name
+			Result := a_name.twin
 			Result.append_character ('=')
 			if a_is_quoted then
 				Result.append_character ('"')
@@ -114,5 +211,6 @@ feature {NONE} -- Implementation: Constants
 
 invariant
 	valid_class_attribute_value: attached class_attribute_value as al_value implies is_valid_attribute_value (al_value)
+	valid_access_key_attribute_value: attached access_key_attribute_value as al_value implies is_valid_attribute_value (al_value)
 
 end

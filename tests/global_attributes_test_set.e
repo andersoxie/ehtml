@@ -71,8 +71,13 @@ feature -- Test routines
 		local
 			l_test: TEST_ELEMENT
 		do
-			create l_test										-- Test of creation and post-creation invariant.
-			l_test.set_class_attribute_value ("Test_Class-1")	-- Test of invariant, post-setting of "class" attribute.
+			create l_test
+			l_test.set_class_attribute_value ("Test_Class-1")
+			assert_strings_equal ("class_attribute", "class=%"Test_Class-1%"", l_test.class_attribute)
+			l_test.set_access_key_attribute_value ("h")
+			assert_strings_equal ("access_key_attribute", "accesskey=%"h%"", l_test.access_key)
+			l_test.set_content_editable_attribute_value (True)
+			assert_strings_equal ("access_key_attribute", "contenteditable=%"true%"", l_test.content_editable_attribute)
 		end
 
 feature {NONE} -- Implementation
