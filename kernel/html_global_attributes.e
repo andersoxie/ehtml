@@ -224,7 +224,7 @@ feature -- Access: Data-* Attribute
 feature -- Access: Direction Attribute
 
 	dir_attribute: STRING
-			-- ??
+			-- Direction based on optional `dir_attribute_value'.
 		do
 			if attached dir_attribute_value as al_value then
 				Result := dir_attribute_for_indicator (al_value)
@@ -312,7 +312,7 @@ feature -- Access: Draggable Attribute
 				By returning either an empty string, indicative of detached `class_attribute_value'
 				or a fully formed class attribute in accordance with HTML5 specifications.
 				]"
-			EIS: "name=class attribute", "src=http://www.w3schools.com/tags/att_global_contenteditable.asp", "protocol=URI"
+			EIS: "name=class attribute", "src=http://www.w3schools.com/tags/att_global_draggable.asp", "protocol=URI"
 			examples: "[
 				Syntax: <element draggable="true|false">
 				
@@ -337,6 +337,86 @@ feature -- Access: Draggable Attribute
 	draggable_identifier: STRING = "draggable"
 			-- Identifier constants for `draggable_attribute'.
 
+feature -- Access: Dropzone Attribute
+
+	dropzone_attribute: STRING
+			-- ??
+		do
+			if attached dropzone_attribute_value as al_value then
+				Result := dropzone_attribute_for_indicator (al_value)
+			else
+				Result := ""
+			end
+		end
+
+	dropzone_attribute_value: detachable STRING
+			-- HTML "dropzone" global attribute value (optional). See `dropzone_attribute_for_indicator' above and setter/reset below.
+
+	dropzone_attribute_for_indicator (a_dropzone_indicator: STRING): STRING
+			-- Direction attribute depending on `a_dropzone_indicator'.
+		note
+			EIS: "name=dir_attribute", "src=http://www.w3schools.com/tags/att_global_dropzone.asp", "protocol=URI"
+		require
+			valid_indicator: (<<copy_identifier, move_identifier, link_identifier>>).has (a_dropzone_indicator)
+		do
+			create Result.make_empty
+			if a_dropzone_indicator.same_string (copy_identifier) then
+				Result := dropzone_copy_attribute
+			elseif a_dropzone_indicator.same_string (move_identifier) then
+				Result := dropzone_move_attribute
+			elseif a_dropzone_indicator.same_string (link_identifier) then
+				Result := dropzone_link_attribute
+			end
+		ensure
+			has_dropzone_equal: Result.has_substring ("dropzone=")
+			valid_indicator: Result.has_substring (copy_identifier) or
+								Result.has_substring (move_identifier) or
+								Result.has_substring (link_identifier)
+			is_quoted: Result.has ('"') and Result.occurrences ('"') = 2
+		end
+
+	dropzone_copy_attribute: STRING
+			-- dropzone attribute for copy_identifier.
+		note
+			EIS: "name=dropzone_attribute", "src=http://www.w3schools.com/tags/att_global_dropzone.asp", "protocol=URI"
+		do
+			Result := well_formed_html_attribute (dropzone_identifier, copy_identifier, is_double_quoted)
+		ensure
+			valid_result: Result.same_string ("dropzone=%"copy%"")
+		end
+
+	dropzone_move_attribute: STRING
+			-- dropzone attribute for right-to-left.
+		note
+			EIS: "name=dropzone_attribute", "src=http://www.w3schools.com/tags/att_global_dropzone.asp", "protocol=URI"
+		do
+			Result := well_formed_html_attribute (dropzone_identifier, move_identifier, is_double_quoted)
+		ensure
+			valid_result: Result.same_string ("dropzone=%"move%"")
+		end
+
+	dropzone_link_attribute: STRING
+			-- dropzone attribute for link.
+		note
+			EIS: "name=dropzone_attribute", "src=http://www.w3schools.com/tags/att_global_dropzone.asp", "protocol=URI"
+		do
+			Result := well_formed_html_attribute (dropzone_identifier, link_identifier, is_double_quoted)
+		ensure
+			valid_result: Result.same_string ("dropzone=%"link%"")
+		end
+
+	dropzone_identifier: STRING = "dropzone"
+			-- Identifier constants for `dropzone'.
+
+	copy_identifier: STRING = "copy"
+			-- Identifer constants for copy.
+
+	move_identifier: STRING = "move"
+			-- Identifer constants for move.
+
+	link_identifier: STRING = "link"
+			-- Identifer constants for link.
+
 feature -- Status Report: Contract Support
 
 	frozen is_valid_attribute_value (a_value: STRING): BOOLEAN
@@ -358,7 +438,7 @@ feature -- Status Report: Contract Support
 									end
 		end
 
-feature -- Settings
+feature -- Settings: Access Attribute
 
 	set_access_key_attribute_value (a_access_key_attribute_value: attached like access_key_attribute_value)
 			-- Sets `access_key_attribute_value' with `a_access_key_attribute_value'.
@@ -376,6 +456,8 @@ feature -- Settings
 			detached: not attached access_key_attribute_value
 		end
 
+feature -- Settings: Class Attribute
+
 	set_class_attribute_value (a_class_attribute_value: attached like class_attribute_value)
 			-- Sets `class_attribute_value' with `a_class_attribute_value'.
 		do
@@ -391,6 +473,8 @@ feature -- Settings
 		ensure
 			detached: not attached class_attribute_value
 		end
+
+feature -- Settings: Content Editable Attribute
 
 	set_content_editable_attribute_value (a_content_editable_attribute_value: attached like content_editable_attribute_value)
 			-- Sets `content_editable_attribute_value' with `a_content_editable_attribute_value'.
@@ -408,6 +492,8 @@ feature -- Settings
 			set: not content_editable_attribute_value
 		end
 
+feature -- Settings: Data Attribute
+
 	set_data_attribute (a_value: attached like data_attribute_value_anchor; a_key: STRING)
 			-- Set `a_value' and `a_key' into `data_attributes'.
 		do
@@ -419,6 +505,8 @@ feature -- Settings
 		end
 
 	data_attribute_value_anchor: detachable TUPLE [attribute_name, attribute_value: STRING]
+
+feature -- Settings: Direction Attribute
 
 	set_dir_attribute_value (a_dir_attribute_value: attached like dir_attribute_value)
 			-- Sets `dir_attribute_value' with `a_dir_attribute_value'.
@@ -460,6 +548,8 @@ feature -- Settings
 			detached: not attached dir_attribute_value
 		end
 
+feature -- Settings: Draggable Attribute
+
 	set_draggable_attribute_value (a_draggable_attribute_value: attached like draggable_attribute_value)
 			-- Sets `draggable_attribute_value' with `a_draggable_attribute_value'.
 		do
@@ -474,6 +564,48 @@ feature -- Settings
 			draggable_attribute_value := False
 		ensure
 			set: not draggable_attribute_value
+		end
+
+feature -- Settings: Dropzone Attribute
+
+	set_dropzone_attribute_value (a_dropzone_attribute_value: attached like dropzone_attribute_value)
+			-- Sets `dropzone_attribute_value' with `a_dropzone_attribute_value'.
+		do
+			dropzone_attribute_value := a_dropzone_attribute_value
+		ensure
+			dropzone_attribute_value_set: dropzone_attribute_value = a_dropzone_attribute_value
+		end
+
+	set_dropzone_copy
+			-- Set `dropzone_attribute_value' to `copy_identifier'.
+		do
+			dropzone_attribute_value := copy_identifier
+		ensure
+			set: attached dropzone_attribute_value as al_value and then al_value.same_string (copy_identifier)
+		end
+
+	set_dropzone_move
+			-- Set `dropzone_attribute_value' to `move_identifier'.
+		do
+			dropzone_attribute_value := move_identifier
+		ensure
+			set: attached dropzone_attribute_value as al_value and then al_value.same_string (move_identifier)
+		end
+
+	set_dropzone_link
+			-- Set `dropzone_attribute_value' to `link_identifier'.
+		do
+			dropzone_attribute_value := link_identifier
+		ensure
+			set: attached dropzone_attribute_value as al_value and then al_value.same_string (link_identifier)
+		end
+
+	reset_dropzone_attribute_value
+			-- Resets `dir_attribute_value' to Void.
+		do
+			dropzone_attribute_value := Void
+		ensure
+			detached: not attached dropzone_attribute_value
 		end
 
 feature {NONE} -- Implementation: Basic Operations

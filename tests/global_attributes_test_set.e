@@ -95,13 +95,20 @@ feature -- Test routines
 			l_test.set_dir_attribute_value (l_test.auto_identifier)
 			assert_strings_equal ("dir_auto", "dir=%"auto%"", l_test.dir_attribute)
 			l_test.set_dir_left_to_right
-			assert_strings_equal ("dir_auto", "dir=%"ltr%"", l_test.dir_attribute)
+			assert_strings_equal ("dir_ltr", "dir=%"ltr%"", l_test.dir_attribute)
 			l_test.set_dir_right_to_left
-			assert_strings_equal ("dir_auto", "dir=%"rtl%"", l_test.dir_attribute)
-			l_test.set_dir_auto
-			assert_strings_equal ("all_attributes", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%" dir=%"auto%" draggable=%"true%" data-attribute-type=%"bird%"", l_test.attributes_with_data ("attribute_type_bird"))
-			assert_strings_equal ("all_attributes", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%" dir=%"auto%" draggable=%"true%" data-attribute-type=%"fish%"", l_test.attributes_with_data ("attribute_type_fish"))
-			assert_strings_equal ("all_attributes", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%" dir=%"auto%" draggable=%"true%" data-attribute-type=%"spider%"", l_test.attributes_with_data ("attribute_type_spider"))
+			assert_strings_equal ("dir_rtl", "dir=%"rtl%"", l_test.dir_attribute)
+			l_test.reset_dir_attribute_value
+			assert_strings_equal ("all_attributes", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%"  draggable=%"true%" data-attribute-type=%"bird%"", l_test.attributes_with_data ("attribute_type_bird"))
+			assert_strings_equal ("all_attributes", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%"  draggable=%"true%" data-attribute-type=%"fish%"", l_test.attributes_with_data ("attribute_type_fish"))
+			l_test.set_dropzone_copy
+			assert_strings_equal ("dropzone_copy", "dropzone=%"copy%"", l_test.dropzone_attribute)
+			l_test.set_dropzone_link
+			assert_strings_equal ("dropzone_link", "dropzone=%"link%"", l_test.dropzone_attribute)
+			l_test.set_dropzone_move
+			assert_strings_equal ("dropzone_move", "dropzone=%"move%"", l_test.dropzone_attribute)
+			l_test.reset_dropzone_attribute_value
+			assert_strings_equal ("all_attributes", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%"  draggable=%"true%" data-attribute-type=%"spider%"", l_test.attributes_with_data ("attribute_type_spider"))
 		end
 
 end
