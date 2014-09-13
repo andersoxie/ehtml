@@ -166,6 +166,63 @@ feature -- Access
 	data_identifier: STRING = "data-"
 			-- Identifier constants for `data_attribute'.
 
+	dir_attribute (a_dir_indicator: STRING): STRING
+			-- Direction attribute depending on `a_dir_indicator'.
+		require
+			valid_indicator: (<<left_to_right_identifier, right_to_left_identifier, auto_identifier>>).has (a_dir_indicator)
+		do
+			create Result.make_empty
+			if a_dir_indicator.same_string (left_to_right_identifier) then
+				Result := dir_left_to_right_attribute
+			elseif a_dir_indicator.same_string (right_to_left_identifier) then
+				Result := dir_right_to_left_attribute
+			elseif a_dir_indicator.same_string (auto_identifier) then
+				Result := dir_auto_attribute
+			end
+		ensure
+			has_dir_equal: Result.has_substring ("dir=")
+			valid_indicator: Result.has_substring (left_to_right_identifier) or
+								Result.has_substring (right_to_left_identifier) or
+								Result.has_substring (auto_identifier)
+			is_quoted: Result.has ('"') and Result.occurrences ('"') = 2
+		end
+
+	dir_left_to_right_attribute: STRING
+			-- Direction attribute for left-to-right.
+		do
+			Result := well_formed_html_attribute (dir_identifier, left_to_right_identifier, is_double_quoted)
+		ensure
+			valid_result: Result.same_string ("dir=%"ltr%"")
+		end
+
+	dir_right_to_left_attribute: STRING
+			-- Direction attribute for right-to-left.
+		do
+			Result := well_formed_html_attribute (dir_identifier, right_to_left_identifier, is_double_quoted)
+		ensure
+			valid_result: Result.same_string ("dir=%"rtl%"")
+		end
+
+	dir_auto_attribute: STRING
+			-- Direction attribute for auto.
+		do
+			Result := well_formed_html_attribute (dir_identifier, auto_identifier, is_double_quoted)
+		ensure
+			valid_result: Result.same_string ("dir=%"auto%"")
+		end
+
+	dir_identifier: STRING = "dir"
+			-- Identifier constants for `dir_*'.
+
+	left_to_right_identifier: STRING = "ltr"
+			-- Identifer constants for left-to-right.
+
+	right_to_left_identifier: STRING = "rtl"
+			-- Identifer constants for right-to-left.
+
+	auto_identifier: STRING = "auto"
+			-- Identifer constants for auto.
+
 feature -- Status Report: Contract Support
 
 	frozen is_valid_attribute_value (a_value: STRING): BOOLEAN

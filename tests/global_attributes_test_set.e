@@ -84,13 +84,12 @@ feature -- Test routines
 			assert_strings_equal ("attribute_type_bird", "data-attribute-type=%"bird%"", l_test.data_attribute ("attribute_type_bird"))
 			assert_strings_equal ("attribute_type_fish", "data-attribute-type=%"fish%"", l_test.data_attribute ("attribute_type_fish"))
 			assert_strings_equal ("attribute_type_spider", "data-attribute-type=%"spider%"", l_test.data_attribute ("attribute_type_spider"))
-		end
-
-feature {NONE} -- Implementation
-
-	my_feature (a_data: TUPLE): TUPLE
-		do
-			create Result
+			assert_strings_equal ("attribute_dir_ltr", "dir=%"ltr%"", l_test.dir_left_to_right_attribute)
+			assert_strings_equal ("attribute_dir_rtl", "dir=%"rtl%"", l_test.dir_right_to_left_attribute)
+			assert_strings_equal ("attribute_dir_auto", "dir=%"auto%"", l_test.dir_auto_attribute)
+			assert_strings_equal ("attribute_dir_ltr", "dir=%"ltr%"", l_test.dir_attribute (l_test.left_to_right_identifier))
+			assert_strings_equal ("attribute_dir_rtl", "dir=%"rtl%"", l_test.dir_attribute (l_test.right_to_left_identifier))
+			assert_strings_equal ("attribute_dir_auto", "dir=%"auto%"", l_test.dir_attribute (l_test.auto_identifier))
 		end
 
 end
