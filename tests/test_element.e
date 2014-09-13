@@ -16,5 +16,17 @@ class
 
 inherit
 	HTML_GLOBAL_ATTRIBUTES
+		redefine
+			default_create
+		end
+
+feature {NONE} -- Initialization
+
+	default_create
+			-- <Precursor>
+		do
+			Precursor
+			create inline_style
+		end
 
 end

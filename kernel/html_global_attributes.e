@@ -16,10 +16,10 @@ note
 		contextmenu		Specifies a context menu for an element. The context menu appears when a user right-clicks on the element
 		data-*			Used to store custom data private to the page or application
 		dir				Specifies the text direction for the content in an element
-		]"
-	Todos: "[
 		draggable		Specifies whether an element is draggable or not (true/false)
 		dropzone		Specifies whether the dragged data is copied, moved, or linked, when dropped
+		]"
+	Todos: "[
 		hidden			Specifies that an element is not yet, or is no longer, relevant
 		id				Specifies a unique id for an element
 		lang			Specifies the language of the element's content
@@ -42,7 +42,7 @@ feature -- Access
 	attributes: STRING
 			-- Values for all attributes of Current, except data-*.
 		do
-			Result := access_key_attribute
+			Result := access_key_attribute.twin
 			Result.append_character (space_8)
 			Result.append_string (class_attribute)
 			Result.append_character (space_8)
@@ -51,12 +51,14 @@ feature -- Access
 			Result.append_string (dir_attribute)
 			Result.append_character (space_8)
 			Result.append_string (draggable_attribute)
+			Result.append_character (space_8)
+			Result.append_string (inline_style.color_attribute)
 		end
 
 	attributes_with_data (a_data_attribute_key: detachable STRING): STRING
 			-- Values of all attributes of Current.
 		do
-			Result := attributes
+			Result := attributes.twin
 			Result.append_character (space_8)
 			if attached a_data_attribute_key as al_key then
 				Result.append_string (data_attribute_for_key (al_key))
@@ -416,6 +418,11 @@ feature -- Access: Dropzone Attribute
 
 	link_identifier: STRING = "link"
 			-- Identifer constants for link.
+
+feature -- Access: In-line Style
+
+	inline_style: HTML_GLOBAL_STYLE
+			-- In-line Style of Current.
 
 feature -- Status Report: Contract Support
 
