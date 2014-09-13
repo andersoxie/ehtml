@@ -6,7 +6,30 @@ note
 		By providing access to setting values and forming (deriving) HTML5 attributes from
 		the set values. Also, by providing appropriate class invariants to ensure proper
 		formatting of various HTML5 attributes at run-time.
+
+
+		Attribute		Description
+		-----------		--------------------------------------------------
+		accesskey		Specifies a shortcut key to activate/focus an element
+		class			Specifies one or more classnames for an element (refers to a class in a style sheet)
+		contenteditable	Specifies whether the content of an element is editable or not
+		contextmenu		Specifies a context menu for an element. The context menu appears when a user right-clicks on the element
+		data-*			Used to store custom data private to the page or application
+		dir				Specifies the text direction for the content in an element
 		]"
+	Todos: "[
+		draggable		Specifies whether an element is draggable or not (true/false)
+		dropzone		Specifies whether the dragged data is copied, moved, or linked, when dropped
+		hidden			Specifies that an element is not yet, or is no longer, relevant
+		id				Specifies a unique id for an element
+		lang			Specifies the language of the element's content
+		spellcheck		Specifies whether the element is to have its spelling and grammar checked or not
+		style			Specifies an inline CSS style for an element
+		tabindex		Specifies the tabbing order of an element
+		title			Specifies extra information about an element
+		translate		Specifies whether the content of an element should be translated or not
+		]"
+	EIS: "name=global_attributes", "src=http://www.w3schools.com/tags/ref_standardattributes.asp", "protocol=URI"
 	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
@@ -16,7 +39,33 @@ deferred class
 
 feature -- Access
 
-	access_key: STRING
+	attributes: STRING
+			-- Values for all attributes of Current, except data-*.
+		do
+			Result := access_key_attribute
+			Result.append_character (space_8)
+			Result.append_string (class_attribute)
+			Result.append_character (space_8)
+			Result.append_string (content_editable_attribute)
+			Result.append_character (space_8)
+			Result.append_string (dir_attribute)
+			Result.append_character (space_8)
+			Result.append_string (draggable_attribute)
+		end
+
+	attributes_with_data (a_data_attribute_key: detachable STRING): STRING
+			-- Values of all attributes of Current.
+		do
+			Result := attributes
+			Result.append_character (space_8)
+			if attached a_data_attribute_key as al_key then
+				Result.append_string (data_attribute_for_key (al_key))
+			end
+		end
+
+feature -- Access: Access Attribute
+
+	access_key_attribute: STRING
 			-- Well formed HTML "accesskey" global attribute.
 		note
 			purpose: "[
@@ -37,7 +86,9 @@ feature -- Access
 			-- HTML "access_key" global attribute value (optional). See `access_key_attribute' above and setter/reset below.
 
 	access_key_identifier: STRING = "accesskey"
-			-- Identifier constants for `access_key'.
+			-- Identifier constants for `access_key_attribute'.
+
+feature -- Access: Class Attribute
 
 	class_attribute: STRING
 			-- Well formed HTML "class" global attribute.
@@ -74,6 +125,8 @@ feature -- Access
 
 	class_identifier: STRING = "class"
 			-- Identifier constants for `class_attribute'.
+
+feature -- Access: Content Editable Attribute
 
 	content_editable_attribute: STRING
 			-- Well formed HTML "class" global attribute.
@@ -112,7 +165,9 @@ feature -- Access
 	content_editable_identifier: STRING = "contenteditable"
 			-- Identifier constants for `content_editable_attribute'.
 
-	data_attribute (a_key: STRING): STRING
+feature -- Access: Data-* Attribute
+
+	data_attribute_for_key (a_key: STRING): STRING
 			-- Well formed HTML "data=*" global attribute.
 		note
 			how: "[
@@ -164,10 +219,27 @@ feature -- Access
 		end
 
 	data_identifier: STRING = "data-"
-			-- Identifier constants for `data_attribute'.
+			-- Identifier constants for `data_attribute_for_key'.
 
-	dir_attribute (a_dir_indicator: STRING): STRING
+feature -- Access: Direction Attribute
+
+	dir_attribute: STRING
+			-- ??
+		do
+			if attached dir_attribute_value as al_value then
+				Result := dir_attribute_for_indicator (al_value)
+			else
+				Result := ""
+			end
+		end
+
+	dir_attribute_value: detachable STRING
+			-- HTML "dir" global attribute value (optional). See `dir_attribute_for_indicator' above and setter/reset below.
+
+	dir_attribute_for_indicator (a_dir_indicator: STRING): STRING
 			-- Direction attribute depending on `a_dir_indicator'.
+		note
+			EIS: "name=dir_attribute", "src=http://www.w3schools.com/tags/att_global_dir.asp", "protocol=URI"
 		require
 			valid_indicator: (<<left_to_right_identifier, right_to_left_identifier, auto_identifier>>).has (a_dir_indicator)
 		do
@@ -189,6 +261,8 @@ feature -- Access
 
 	dir_left_to_right_attribute: STRING
 			-- Direction attribute for left-to-right.
+		note
+			EIS: "name=dir_attribute", "src=http://www.w3schools.com/tags/att_global_dir.asp", "protocol=URI"
 		do
 			Result := well_formed_html_attribute (dir_identifier, left_to_right_identifier, is_double_quoted)
 		ensure
@@ -197,6 +271,8 @@ feature -- Access
 
 	dir_right_to_left_attribute: STRING
 			-- Direction attribute for right-to-left.
+		note
+			EIS: "name=dir_attribute", "src=http://www.w3schools.com/tags/att_global_dir.asp", "protocol=URI"
 		do
 			Result := well_formed_html_attribute (dir_identifier, right_to_left_identifier, is_double_quoted)
 		ensure
@@ -205,6 +281,8 @@ feature -- Access
 
 	dir_auto_attribute: STRING
 			-- Direction attribute for auto.
+		note
+			EIS: "name=dir_attribute", "src=http://www.w3schools.com/tags/att_global_dir.asp", "protocol=URI"
 		do
 			Result := well_formed_html_attribute (dir_identifier, auto_identifier, is_double_quoted)
 		ensure
@@ -222,6 +300,42 @@ feature -- Access
 
 	auto_identifier: STRING = "auto"
 			-- Identifer constants for auto.
+
+feature -- Access: Draggable Attribute
+
+	draggable_attribute: STRING
+			-- Well formed HTML "draggable" global attribute.
+		note
+			purpose: "[
+				]"
+			how: "[
+				By returning either an empty string, indicative of detached `class_attribute_value'
+				or a fully formed class attribute in accordance with HTML5 specifications.
+				]"
+			EIS: "name=class attribute", "src=http://www.w3schools.com/tags/att_global_contenteditable.asp", "protocol=URI"
+			examples: "[
+				Syntax: <element draggable="true|false">
+				
+				Attribute Values
+				====================
+				Value	Description
+				------- ------------------------------------------
+				true	Specifies that the element is editable
+				false	Specifies that the element is not editable
+				]"
+		local
+			l_flag: STRING
+		do
+			l_flag := draggable_attribute_value.out
+			l_flag.to_lower
+			Result := well_formed_html_attribute (draggable_identifier, l_flag, is_double_quoted)
+		end
+
+	draggable_attribute_value: BOOLEAN
+			-- HTML "draggable" global attribute value ("false" by default). See `draggable_attribute' above and setter/reset below.
+
+	draggable_identifier: STRING = "draggable"
+			-- Identifier constants for `draggable_attribute'.
 
 feature -- Status Report: Contract Support
 
@@ -258,6 +372,8 @@ feature -- Settings
 			-- Resets `access_key_attribute_value' to Void.
 		do
 			access_key_attribute_value := Void
+		ensure
+			detached: not attached access_key_attribute_value
 		end
 
 	set_class_attribute_value (a_class_attribute_value: attached like class_attribute_value)
@@ -272,6 +388,8 @@ feature -- Settings
 			-- Resets `class_attribute_value' to Void.
 		do
 			class_attribute_value := Void
+		ensure
+			detached: not attached class_attribute_value
 		end
 
 	set_content_editable_attribute_value (a_content_editable_attribute_value: attached like content_editable_attribute_value)
@@ -286,6 +404,8 @@ feature -- Settings
 			-- Resets `content_editable_attribute_value' to Void.
 		do
 			content_editable_attribute_value := False
+		ensure
+			set: not content_editable_attribute_value
 		end
 
 	set_data_attribute (a_value: attached like data_attribute_value_anchor; a_key: STRING)
@@ -299,6 +419,62 @@ feature -- Settings
 		end
 
 	data_attribute_value_anchor: detachable TUPLE [attribute_name, attribute_value: STRING]
+
+	set_dir_attribute_value (a_dir_attribute_value: attached like dir_attribute_value)
+			-- Sets `dir_attribute_value' with `a_dir_attribute_value'.
+		do
+			dir_attribute_value := a_dir_attribute_value
+		ensure
+			dir_attribute_value_set: dir_attribute_value = a_dir_attribute_value
+		end
+
+	set_dir_left_to_right
+			-- Set `dir_attribute_value' to `left_to_right_identifier'.
+		do
+			dir_attribute_value := left_to_right_identifier
+		ensure
+			set: attached dir_attribute_value as al_value and then al_value.same_string (left_to_right_identifier)
+		end
+
+	set_dir_right_to_left
+			-- Set `dir_attribute_value' to `right_to_left_identifier'.
+		do
+			dir_attribute_value := right_to_left_identifier
+		ensure
+			set: attached dir_attribute_value as al_value and then al_value.same_string (right_to_left_identifier)
+		end
+
+	set_dir_auto
+			-- Set `dir_attribute_value' to `auto_identifier'.
+		do
+			dir_attribute_value := auto_identifier
+		ensure
+			set: attached dir_attribute_value as al_value and then al_value.same_string (auto_identifier)
+		end
+
+	reset_dir_attribute_value
+			-- Resets `dir_attribute_value' to Void.
+		do
+			dir_attribute_value := Void
+		ensure
+			detached: not attached dir_attribute_value
+		end
+
+	set_draggable_attribute_value (a_draggable_attribute_value: attached like draggable_attribute_value)
+			-- Sets `draggable_attribute_value' with `a_draggable_attribute_value'.
+		do
+			draggable_attribute_value := a_draggable_attribute_value
+		ensure
+			draggable_attribute_value_set: draggable_attribute_value = a_draggable_attribute_value
+		end
+
+	reset_draggable_value
+			-- Resets `draggable_attribute_value' to Void.
+		do
+			draggable_attribute_value := False
+		ensure
+			set: not draggable_attribute_value
+		end
 
 feature {NONE} -- Implementation: Basic Operations
 
@@ -325,6 +501,12 @@ feature {NONE} -- Implementation: Basic Operations
 		end
 
 feature {NONE} -- Implementation: Constants
+
+	space_8: CHARACTER_8
+			-- Space character constant for Current.
+		once
+			Result := {HTML_CONSTANTS}.space_8
+		end
 
 	frozen is_double_quoted: BOOLEAN
 			-- Named BOOLEAN constant indicative of some item wrapped in double-quotes.

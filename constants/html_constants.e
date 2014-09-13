@@ -23,6 +23,9 @@ feature -- Constants
 	special_characters: STRING = "-_"
 			-- Miscellaneous special characters.
 
+	space_8: CHARACTER_8 = ' '
+			-- 8-bit space.
+
 feature -- Constants: Named Boolean Operators
 
 	is_double_quoted: BOOLEAN = True
