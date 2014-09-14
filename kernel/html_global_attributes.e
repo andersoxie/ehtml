@@ -169,6 +169,18 @@ feature -- Access: Content Editable Attribute
 
 feature -- Access: Data-* Attribute
 
+	data_attributes: STRING
+			-- Well-formed HTML "data-*" global attributes (all in `data_attributes_hash').
+		do
+			create Result.make_empty
+			across data_attributes_hash as ic_data loop
+				check has_item: attached {like data_attribute_value_anchor} ic_data.item as al_item then
+					Result.append_string (well_formed_html_attribute (data_identifier + al_item.attribute_name, al_item.attribute_value, is_double_quoted))
+					Result.append_character (' ')
+				end
+			end
+		end
+
 	data_attribute_for_key (a_key: STRING): STRING
 			-- Well formed HTML "data=*" global attribute.
 		note
@@ -183,14 +195,14 @@ feature -- Access: Data-* Attribute
 				Retrieve from this list by: Current.data_attributes ["animal-type-bird"] from: item alias "[]" (key: K): detachable G
 				]"
 		require
-			has_key_value: data_attributes.has (a_key)
+			has_key_value: data_attributes_hash.has (a_key)
 		do
-			check has_value: attached {like data_attribute_value_anchor} data_attributes [a_key] as al_value then
+			check has_value: attached {like data_attribute_value_anchor} data_attributes_hash [a_key] as al_value then
 				Result := well_formed_html_attribute (data_identifier + al_value.attribute_name, al_value.attribute_value, is_double_quoted)
 			end
 		end
 
-	data_attributes: HASH_TABLE [TUPLE [STRING, STRING], STRING]
+	data_attributes_hash: HASH_TABLE [TUPLE [STRING, STRING], STRING]
 			-- Hash of data attributes, name and value (key-value pairs).
 		note
 			purpose: "[
@@ -502,11 +514,11 @@ feature -- Settings: Content Editable Attribute
 feature -- Settings: Data Attribute
 
 	set_data_attribute (a_value: attached like data_attribute_value_anchor; a_key: STRING)
-			-- Set `a_value' and `a_key' into `data_attributes'.
+			-- Set `a_value' and `a_key' into `data_attributes_hash'.
 		do
-			data_attributes.force (a_value, a_key)
+			data_attributes_hash.force (a_value, a_key)
 		ensure
-			has_entry: attached {attached like data_attribute_value_anchor} data_attributes.at (a_key) as al_value and then
+			has_entry: attached {attached like data_attribute_value_anchor} data_attributes_hash.at (a_key) as al_value and then
 						al_value.attribute_name.same_string (a_value.attribute_name) and then
 						al_value.attribute_value.same_string (a_value.attribute_value)
 		end
@@ -656,8 +668,8 @@ feature {NONE} -- Implementation: Constants
 invariant
 	valid_class_attribute_value: attached class_attribute_value as al_value implies is_valid_attribute_value (al_value)
 	valid_access_key_attribute_value: attached access_key_attribute_value as al_value implies is_valid_attribute_value (al_value)
-	valid_data_values: data_attributes.count > 0 implies
-						across data_attributes as ic_data all
+	valid_data_values: data_attributes_hash.count > 0 implies
+						across data_attributes_hash as ic_data all
 							attached {like data_attribute_value_anchor} ic_data.item as al_data and then
 								is_valid_attribute_value (al_data.attribute_value)
 						end
