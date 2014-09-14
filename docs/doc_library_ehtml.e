@@ -19,7 +19,19 @@ note
 		
 		NOTE: Two limits must be met:
 			A) Minimal object creation and maximum HTML generation.
-			B) 
+			B) Minimal calculation (HTML generation).
+			
+		Way-forward:
+			Step #1: Write out HTML/Javascript in full, giving Eiffel code option to place 
+				in response. [2]
+			Step #2: See the patterns in the HTML/Javascript examples (3 or more) and teach 
+				Eiffel to generate and replace in hand-code.[1]
+				
+		Footnotes:
+		[1] See (for example) WOW-Slider (exampled in "Fusion" cluster), which has a program that is a
+			code generator, but generates around Javascript, CSS, and HTML.
+		[2] Start with the CSS-Slidy-gh-pages because the HTML is very simple and the JS is
+			encapsulated in a *.js file.
 		]"
 	date: "$Date$"
 	revision: "$Revision$"
