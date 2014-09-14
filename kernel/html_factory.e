@@ -18,11 +18,11 @@ feature -- Access
 	html_page (a_body, a_language_code: STRING): STRING
 			-- HTML Page	
 		do
-			Result := tag_with_contents ("!doctype", "html", no_tag_content, no_global_attributes, False, False)
+			Result := tag_with_contents ("!doctype", "html", no_tag_content, no_global_attributes, False, False, False)
 			if not a_language_code.is_empty then
-				Result.append_string (tag_with_contents (html_tag, "lang=" + a_language_code, no_tag_content, no_global_attributes, True, False))
+				Result.append_string (tag_with_contents (html_tag, "lang=" + a_language_code, no_tag_content, no_global_attributes, True, False, False))
 			else
-				Result.append_string (tag_with_contents (html_tag, no_manaul_attributes, no_tag_content, no_global_attributes, True, False))
+				Result.append_string (tag_with_contents (html_tag, no_manaul_attributes, no_tag_content, no_global_attributes, True, False, False))
 			end
 		end
 
@@ -30,7 +30,32 @@ feature -- Access
 
 feature -- Basic Operations
 
-	tag_with_contents (a_tag: STRING; a_manual_attributes, a_contents: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_has_end_tag, a_is_self_ending: BOOLEAN): STRING
+	build_content_as_indented_newlines (a_items: ARRAY [STRING]): STRING
+			-- Build Result content as indented lines from `a_items'.
+		do
+			create Result.make_empty
+			across a_items as ic_items loop
+				Result.append_string (indent_one_level_and_then_newline (ic_items.item))
+			end
+		end
+
+	indent_one_level_and_then_newline (a_item: STRING): STRING
+			-- Indent `a_item' one level (i.e. TAB in one) and then append a newline char.
+		do
+			Result := indent_to_level (a_item, 1)
+			Result.append_character ('%N')
+		end
+
+	indent_to_level (a_item: STRING; a_tab_count: INTEGER): STRING
+			-- Indent `a_item' `a_tab_level' levels (i.e. TAB in `n' number of times).
+		do
+			Result := a_item
+			across 1 |..| a_tab_count as ic_counter loop
+				Result.prepend_character ('%T')
+			end
+		end
+
+	tag_with_contents (a_tag: STRING; a_manual_attributes, a_contents: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_has_end_tag, a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
 			-- Start and End tags with `a_contents' between.
 		note
 			purpose: "[
@@ -39,25 +64,29 @@ feature -- Basic Operations
 				also including any content between the tags.
 				]"
 		do
-			Result := start_tag (a_tag, a_manual_attributes, a_attributes, a_is_self_ending)
+			Result := start_tag (a_tag, a_manual_attributes, a_attributes, a_is_self_ending, a_suppress_newlines)
 			Result.append_string (a_contents)
 			if a_has_end_tag then
 				Result.append_string (end_tag (a_tag))
 			end
 		end
 
-	start_tag (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_is_self_ending: BOOLEAN): STRING
+	start_tag (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
 			-- Start tag based on `a_tag'.
 		local
 			l_attributes: STRING
 		do
 			if attached a_attributes as al_attributes then
 				l_attributes := al_attributes.attributes.twin
-				l_attributes.append_character (space)
-				l_attributes.append_string (a_manual_attributes)
+				if attached a_manual_attributes as al_manual_attributes and then al_manual_attributes.is_empty then
+					l_attributes.append_character (space)
+					l_attributes.append_string (al_manual_attributes)
+				end
+				l_attributes.prepend_character (space)
 			else
 				if attached a_manual_attributes as al_manual_attributes then
 					create l_attributes.make_from_string (al_manual_attributes)
+					l_attributes.prepend_character (space)
 				else
 					create l_attributes.make_empty
 				end
@@ -65,13 +94,14 @@ feature -- Basic Operations
 			create Result.make (a_tag.count + 2 + l_attributes.count)
 			Result.append_character (left_angle)
 			Result.append_string (a_tag)
-			Result.append_character (space)
 			Result.append_string (l_attributes)
 			if a_is_self_ending then
 				Result.append_character (end_slash)
 			end
 			Result.append_character (right_angle)
-			Result.append_character (new_line)
+			if not a_suppress_newlines then
+				Result.append_character (new_line)
+			end
 		end
 
 	end_tag (a_tag: STRING): STRING
