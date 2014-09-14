@@ -37,13 +37,20 @@ feature -- Basic Operations
 			across a_items as ic_items loop
 				Result.append_string (indent_one_level_and_then_newline (ic_items.item))
 			end
+		ensure
+			has_all_items: across a_items as ic_items all Result.has_substring (ic_items.item) end
 		end
 
 	indent_one_level_and_then_newline (a_item: STRING): STRING
 			-- Indent `a_item' one level (i.e. TAB in one) and then append a newline char.
+		require
+			has_item: not a_item.is_empty
 		do
 			Result := indent_to_level (a_item, 1)
-			Result.append_character ('%N')
+			Result.append_character (newline)
+		ensure
+			has_item: Result.has_substring (a_item)
+			last_is_newline: Result [Result.count] = newline
 		end
 
 	indent_to_level (a_item: STRING; a_tab_count: INTEGER): STRING
@@ -51,8 +58,10 @@ feature -- Basic Operations
 		do
 			Result := a_item
 			across 1 |..| a_tab_count as ic_counter loop
-				Result.prepend_character ('%T')
+				Result.prepend_character (tab)
 			end
+		ensure
+			has_tab_count: Result.occurrences (tab) = a_tab_count
 		end
 
 	tag_with_contents (a_tag: STRING; a_manual_attributes, a_contents: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_has_end_tag, a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
@@ -100,7 +109,7 @@ feature -- Basic Operations
 			end
 			Result.append_character (right_angle)
 			if not a_suppress_newlines then
-				Result.append_character (new_line)
+				Result.append_character (newline)
 			end
 		end
 
@@ -120,7 +129,8 @@ feature {NONE} -- Implementation: Constants
 	right_angle: CHARACTER_8 = '>'
 	end_slash: CHARACTER_8 = '\'
 	space: CHARACTER_8 = ' '
-	new_line: CHARACTER_8 = '%N'
+	newline: CHARACTER_8 = '%N'
+	tab: CHARACTER_8 = '%T'
 
 	no_manaul_attributes: detachable STRING
 			-- Constants used to indicate how there are no manually determined attributes for the tag under construction.

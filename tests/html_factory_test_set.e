@@ -37,21 +37,25 @@ feature -- Test routines
 		do
 			create l_factory
 
-				-- <title>CSSslidy</title>
+				-- Build: <title>CSSslidy</title>
 			l_title := l_factory.tag_with_contents ("title", no_manual_attributes, "CSSslidy", no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
+				-- ... and test ...
 			assert_strings_equal ("title_tag", "<title>CSSslidy<\title>", l_title)
 
-				-- <link rel="stylesheet" href="styles.css">
+				-- Build: <link rel="stylesheet" href="styles.css">
 			l_link := l_factory.tag_with_contents ("link", "rel=%"stylesheet%" href=%"styles.css%"", no_content, no_global_attributes, not has_end_tag, not is_self_ending, suppress_newlines)
+				-- ... and test ...
 			assert_strings_equal ("link_tag", "<link rel=%"stylesheet%" href=%"styles.css%">", l_link)
 
-				-- <meta charset=utf-8>
+				-- Build: <meta charset=utf-8>
 			l_meta := l_factory.tag_with_contents ("meta", "charset=utf-8", no_content, no_global_attributes, not has_end_tag, not is_self_ending, suppress_newlines)
+				-- ... and test ...
 			assert_strings_equal ("meta_tag", "<meta charset=utf-8>", l_meta)
 
 				-- <head> ... </head> see `slidy_head_with_content'.
 			l_head_content := l_factory.build_content_as_indented_newlines (<<l_title, l_link, l_meta>>)
 			l_head := l_factory.tag_with_contents ("head", no_manual_attributes, l_head_content, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
+				-- ... and test ...
 			assert_strings_equal ("head", slidy_head_with_content, l_head)
 		end
 
