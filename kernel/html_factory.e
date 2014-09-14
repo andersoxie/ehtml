@@ -6,6 +6,13 @@ note
 		By a supply of start-and-end tags, which are appended, where appending is
 		the fastest and most efficient way to build strings.
 		]"
+	todos: "[
+		1. Instead of just `tag_with_content', do simpler variants like:
+			a. `tag_inline_without_content'
+			b. `tag_inline_no_end'
+			c. `tag_inline_with_end'
+			d. ... etc
+		]"
 	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
