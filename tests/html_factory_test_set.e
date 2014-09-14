@@ -33,7 +33,8 @@ feature -- Test routines
 			l_head,
 			l_head_content,
 			l_link,
-			l_meta: STRING
+			l_meta,
+			l_img_1, l_img_2, l_img_3, l_img_4: STRING
 		do
 			create l_factory
 
@@ -57,6 +58,12 @@ feature -- Test routines
 			l_head := l_factory.tag_with_contents ("head", no_manual_attributes, l_head_content, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
 				-- ... and test ...
 			assert_strings_equal ("head", slidy_head_with_content, l_head)
+
+				-- Build: <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/antelope-canyon.jpg" alt="Photograph of orange rock formations in Antelope Canyon, Arizona by eliyasj" data-caption="Antelope Canyon, Arizona">
+			l_factory.set_data_attribute (["caption" ,"Antelope Canyon, Arizona"], "caption-antelope-canyon-arizona")
+			l_img_1 := l_factory.tag_with_contents ("img", "src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/antelope-canyon.jpg%" alt=%"Photograph of orange rock formations in Antelope Canyon, Arizona by eliyasj%"", no_content, l_factory, not has_end_tag, not is_self_ending, suppress_newlines)
+				-- ... and test ...
+			assert_strings_equal ("img_1", img_1, l_img_1)
 		end
 
 feature {NONE} -- Implementation: Constants
@@ -91,6 +98,8 @@ feature {NONE} -- Implementation: Constants
 <\head>
 ]"
 
+	img_1: STRING ="<img src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/antelope-canyon.jpg%" alt=%"Photograph of orange rock formations in Antelope Canyon, Arizona by eliyasj%" data-caption=%"Antelope Canyon, Arizona%">"
+		--          <img src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/antelope-canyon.jpg%" alt=%"Photograph of orange rock formations in Antelope Canyon, Arizona by eliyasj%">
 end
 
 

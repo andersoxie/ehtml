@@ -13,6 +13,9 @@ note
 class
 	HTML_FACTORY
 
+inherit
+	HTML_GLOBAL_ATTRIBUTES
+
 feature -- Access
 
 	html_page (a_body, a_language_code: STRING): STRING
@@ -83,15 +86,20 @@ feature -- Basic Operations
 	start_tag (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
 			-- Start tag based on `a_tag'.
 		local
+			l_result,
 			l_attributes: STRING
 		do
 			if attached a_attributes as al_attributes then
-				l_attributes := al_attributes.attributes.twin
-				if attached a_manual_attributes as al_manual_attributes and then al_manual_attributes.is_empty then
-					l_attributes.append_character (space)
-					l_attributes.append_string (al_manual_attributes)
+				create l_result.make_empty
+				if attached a_manual_attributes as al_manual_attributes and then not al_manual_attributes.is_empty then
+					l_result.append_character (space)
+					l_result.append_string (al_manual_attributes)
 				end
-				l_attributes.prepend_character (space)
+				l_attributes := al_attributes.attributes_with_all_data.twin
+				if not l_attributes.is_empty then
+					l_result.append_string (l_attributes)
+				end
+				l_attributes := l_result
 			else
 				if attached a_manual_attributes as al_manual_attributes then
 					create l_attributes.make_from_string (al_manual_attributes)

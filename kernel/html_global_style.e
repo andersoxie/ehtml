@@ -20,8 +20,10 @@ feature -- Access
 				Result.append_string ("inherit")
 			elseif attached color_value then
 				Result.append_string (color_value)
-			else
+			elseif is_generate_color_initial then
 				Result.append_string ("initial")
+			else
+				create Result.make_empty
 			end
 		end
 
@@ -30,6 +32,9 @@ feature -- Access
 
 	color_value: detachable STRING
 			-- Color of Current.
+
+	is_generate_color_initial: BOOLEAN
+			-- Should Current generate "color:initial" when `color_value' is detached?
 
 	is_inherit_color: BOOLEAN
 			-- Does Current inherit its color from the parent element?

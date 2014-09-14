@@ -107,8 +107,8 @@ feature -- Test routines
 			assert_strings_equal ("dir_rtl", "dir=%"rtl%"", l_test.dir_attribute)
 			l_test.reset_dir_attribute_value
 				-- all attributes
-			assert_strings_equal ("all_attributes", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%"  draggable=%"true%" color:initial data-attribute-type=%"bird%"", l_test.attributes_with_data ("attribute_type_bird"))
-			assert_strings_equal ("all_attributes", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%"  draggable=%"true%" color:initial data-attribute-type=%"fish%"", l_test.attributes_with_data ("attribute_type_fish"))
+			assert_strings_equal ("all_attributes_0", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%"  draggable=%"true%"  data-attribute-type=%"bird%"", l_test.attributes_with_data ("attribute_type_bird"))
+			assert_strings_equal ("all_attributes_1", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%"  draggable=%"true%"  data-attribute-type=%"fish%"", l_test.attributes_with_data ("attribute_type_fish"))
 				-- dropzone
 			l_test.set_dropzone_copy
 			assert_strings_equal ("dropzone_copy", "dropzone=%"copy%"", l_test.dropzone_attribute)
@@ -117,8 +117,8 @@ feature -- Test routines
 			l_test.set_dropzone_move
 			assert_strings_equal ("dropzone_move", "dropzone=%"move%"", l_test.dropzone_attribute)
 			l_test.reset_dropzone_attribute_value
-			assert_strings_equal ("all_attributes", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%"  draggable=%"true%" color:initial data-attribute-type=%"spider%"", l_test.attributes_with_data ("attribute_type_spider"))
-			assert_strings_equal ("inline_style", "color:initial", l_test.inline_style.color_attribute)
+			assert_strings_equal ("all_attributes_2", "accesskey=%"h%" class=%"Test_Class-1%" contenteditable=%"true%"  draggable=%"true%"  data-attribute-type=%"spider%"", l_test.attributes_with_data ("attribute_type_spider"))
+--			assert_strings_equal ("inline_style", "color:initial", l_test.inline_style.color_attribute)
 		end
 
 end

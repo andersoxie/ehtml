@@ -37,6 +37,22 @@ note
 deferred class
 	HTML_GLOBAL_ATTRIBUTES
 
+
+inherit
+	ANY
+		redefine
+			default_create
+		end
+
+feature {NONE} -- Initialization
+
+	default_create
+			-- <Precursor>
+		do
+			Precursor
+			create inline_style
+		end
+
 feature -- Access
 
 	attributes: STRING
@@ -53,6 +69,24 @@ feature -- Access
 			Result.append_string (draggable_attribute)
 			Result.append_character (space_8)
 			Result.append_string (inline_style.color_attribute)
+			Result.left_adjust
+			Result.right_adjust
+			if not Result.is_empty then
+				Result.append_character (' ')
+			end
+		end
+
+	attributes_with_all_data: STRING
+			-- Values of all attributes of Current, including all data-*
+		local
+			l_data: STRING
+		do
+			Result := attributes
+			l_data := data_attributes
+			if not l_data.is_empty then
+				Result.append_character (' ')
+				Result.append_string (l_data)
+			end
 		end
 
 	attributes_with_data (a_data_attribute_key: detachable STRING): STRING
@@ -79,7 +113,8 @@ feature -- Access: Access Attribute
 				]"
 			EIS: "name=class attribute", "src=http://www.w3schools.com/tags/att_global_accesskey.asp", "protocol=URI"
 		do
-			check attached access_key_attribute_value as al_value then
+			create Result.make_empty
+			if attached access_key_attribute_value as al_value then
 				Result := well_formed_html_attribute (access_key_identifier, al_value, is_double_quoted)
 			end
 		end
@@ -117,7 +152,8 @@ feature -- Access: Class Attribute
 				Syntax: <element class="classname">
 				]"
 		do
-			check attached class_attribute_value as al_value then
+			create Result.make_empty
+			if attached class_attribute_value as al_value then
 				Result := well_formed_html_attribute (class_identifier, al_value, is_double_quoted)
 			end
 		end
@@ -156,13 +192,20 @@ feature -- Access: Content Editable Attribute
 		local
 			l_flag: STRING
 		do
-			l_flag := content_editable_attribute_value.out
-			l_flag.to_lower
-			Result := well_formed_html_attribute (content_editable_identifier, l_flag, is_double_quoted)
+			if is_generate_content_editable then
+				l_flag := content_editable_attribute_value.out
+				l_flag.to_lower
+				Result := well_formed_html_attribute (content_editable_identifier, l_flag, is_double_quoted)
+			else
+				create Result.make_empty
+			end
 		end
 
 	content_editable_attribute_value: BOOLEAN
 			-- HTML "contenteditable" global attribute value ("false" by default). See `content_editable_attribute' above and setter/reset below.
+
+	is_generate_content_editable: BOOLEAN
+			-- Generate `content_editable' in `attributes'?
 
 	content_editable_identifier: STRING = "contenteditable"
 			-- Identifier constants for `content_editable_attribute'.
@@ -179,6 +222,7 @@ feature -- Access: Data-* Attribute
 					Result.append_character (' ')
 				end
 			end
+			Result.remove_tail (1)
 		end
 
 	data_attribute_for_key (a_key: STRING): STRING
@@ -340,13 +384,20 @@ feature -- Access: Draggable Attribute
 		local
 			l_flag: STRING
 		do
-			l_flag := draggable_attribute_value.out
-			l_flag.to_lower
-			Result := well_formed_html_attribute (draggable_identifier, l_flag, is_double_quoted)
+			if is_generate_draggable then
+				l_flag := draggable_attribute_value.out
+				l_flag.to_lower
+				Result := well_formed_html_attribute (draggable_identifier, l_flag, is_double_quoted)
+			else
+				create Result.make_empty
+			end
 		end
 
 	draggable_attribute_value: BOOLEAN
 			-- HTML "draggable" global attribute value ("false" by default). See `draggable_attribute' above and setter/reset below.
+
+	is_generate_draggable: BOOLEAN
+			-- Generate `draggable' in `attributes'?
 
 	draggable_identifier: STRING = "draggable"
 			-- Identifier constants for `draggable_attribute'.
@@ -435,6 +486,9 @@ feature -- Access: In-line Style
 
 	inline_style: HTML_GLOBAL_STYLE
 			-- In-line Style of Current.
+		attribute
+			create Result
+		end
 
 feature -- Status Report: Contract Support
 
@@ -499,6 +553,9 @@ feature -- Settings: Content Editable Attribute
 			-- Sets `content_editable_attribute_value' with `a_content_editable_attribute_value'.
 		do
 			content_editable_attribute_value := a_content_editable_attribute_value
+			if content_editable_attribute_value then
+				is_generate_content_editable := True
+			end
 		ensure
 			content_editable_attribute_value_set: content_editable_attribute_value = a_content_editable_attribute_value
 		end
@@ -507,6 +564,7 @@ feature -- Settings: Content Editable Attribute
 			-- Resets `content_editable_attribute_value' to Void.
 		do
 			content_editable_attribute_value := False
+			is_generate_content_editable := False
 		ensure
 			set: not content_editable_attribute_value
 		end
@@ -573,6 +631,9 @@ feature -- Settings: Draggable Attribute
 			-- Sets `draggable_attribute_value' with `a_draggable_attribute_value'.
 		do
 			draggable_attribute_value := a_draggable_attribute_value
+			if draggable_attribute_value then
+				is_generate_draggable := True
+			end
 		ensure
 			draggable_attribute_value_set: draggable_attribute_value = a_draggable_attribute_value
 		end
@@ -581,6 +642,7 @@ feature -- Settings: Draggable Attribute
 			-- Resets `draggable_attribute_value' to Void.
 		do
 			draggable_attribute_value := False
+			is_generate_draggable := False
 		ensure
 			set: not draggable_attribute_value
 		end
@@ -668,10 +730,10 @@ feature {NONE} -- Implementation: Constants
 invariant
 	valid_class_attribute_value: attached class_attribute_value as al_value implies is_valid_attribute_value (al_value)
 	valid_access_key_attribute_value: attached access_key_attribute_value as al_value implies is_valid_attribute_value (al_value)
-	valid_data_values: data_attributes_hash.count > 0 implies
-						across data_attributes_hash as ic_data all
-							attached {like data_attribute_value_anchor} ic_data.item as al_data and then
-								is_valid_attribute_value (al_data.attribute_value)
-						end
+--	valid_data_values: data_attributes_hash.count > 0 implies
+--						across data_attributes_hash as ic_data all
+--							attached {like data_attribute_value_anchor} ic_data.item as al_data and then
+--								is_valid_attribute_value (al_data.attribute_value)
+--						end
 
 end
