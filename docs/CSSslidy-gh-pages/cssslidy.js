@@ -2,8 +2,8 @@
     var options = (function() {
         var mergedOptions = {},
         defaultOptions = {
-            timeOnSlide: 5,
-            timeBetweenSlides: 2,
+            timeOnSlide: 3,
+            timeBetweenSlides: 1,
             slidyContainerSelector: '#slidy-container', // name of slider container
             slidySelector: '#slidy', // name of slider
             slidyDirection: 'left', // options: left, right
