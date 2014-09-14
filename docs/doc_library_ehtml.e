@@ -13,7 +13,7 @@ note
 		Problem: Object creation on a web server is taboo because it is inefficient. Create
 			objects once and use-reset/reuse as needed.
 		Solution #1 (proposed): Code-snippet blocks of HTML, loaded once, with feature to access.
-		Solution #2 (proposed): HTML generating factories, loaded once, with features to emit HTML.
+		Solution #2 (proposed): HTML generating factories, loaded once, with features to emit HTML. [3]
 		Solution #3 (proposed): Pre-written support material (e.g. CSS, Javascript libraries).
 		Solution #4 (proposed): Combination of #1, #2, and #3.
 		
@@ -32,6 +32,7 @@ note
 			code generator, but generates around Javascript, CSS, and HTML.
 		[2] Start with the CSS-Slidy-gh-pages because the HTML is very simple and the JS is
 			encapsulated in a *.js file.
+		[3] Appending or prepending is reported as the fastest most efficient way to build strings.
 		]"
 	date: "$Date$"
 	revision: "$Revision$"
