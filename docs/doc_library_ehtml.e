@@ -37,7 +37,7 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 
-class
+deferred class
 	DOC_LIBRARY_EHTML
 
 end

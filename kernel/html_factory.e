@@ -26,13 +26,20 @@ inherit
 feature -- Access
 
 	html_page (a_body, a_language_code: STRING): STRING
-			-- HTML Page	
+			-- HTML Page
+		local
+			l_body: STRING
 		do
-			Result := tag_with_contents ("!doctype", "html", no_tag_content, no_global_attributes, False, False, False)
-			if not a_language_code.is_empty then
-				Result.append_string (tag_with_contents (html_tag, "lang=" + a_language_code, no_tag_content, no_global_attributes, True, False, False))
+			if attached a_body as al_body then
+				l_body := tag_with_contents ("body", no_manaul_attributes, al_body, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
 			else
-				Result.append_string (tag_with_contents (html_tag, no_manaul_attributes, no_tag_content, no_global_attributes, True, False, False))
+				l_body := a_body
+			end
+			Result := tag_with_contents ("!doctype", "html", no_manaul_attributes, no_global_attributes, False, False, False)
+			if not a_language_code.is_empty then
+				Result.append_string (tag_with_contents (html_tag, "lang=" + a_language_code, l_body, no_global_attributes, True, False, False))
+			else
+				Result.append_string (tag_with_contents (html_tag, no_manaul_attributes, l_body, no_global_attributes, True, False, False))
 			end
 		end
 
@@ -142,10 +149,24 @@ feature {NONE} -- Implementation: Constants
 
 	left_angle: CHARACTER_8 = '<'
 	right_angle: CHARACTER_8 = '>'
-	end_slash: CHARACTER_8 = '\'
+	end_slash: CHARACTER_8 = '/'
 	space: CHARACTER_8 = ' '
 	newline: CHARACTER_8 = '%N'
 	tab: CHARACTER_8 = '%T'
+
+	english_code: STRING = "en"
+
+	no_body: STRING = ""
+
+	no_content: detachable STRING
+
+	no_manual_attributes: detachable STRING
+
+	has_end_tag: BOOLEAN = True
+
+	is_self_ending: BOOLEAN = True
+
+	suppress_newlines: BOOLEAN = True
 
 	no_manaul_attributes: detachable STRING
 			-- Constants used to indicate how there are no manually determined attributes for the tag under construction.
