@@ -52,62 +52,62 @@ feature -- Test routines
 			create l_factory
 
 				-- Build: <title>CSSslidy</title>
-			l_title := l_factory.tag_with_contents ("title", no_manual_attributes, "CSSslidy", no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
+			l_title := l_factory.tag_contented ("title", no_manual_attributes, "CSSslidy", no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
 				-- ... and test ...
 			assert_strings_equal ("title_tag", "<title>CSSslidy</title>", l_title)
 
 				-- Build: <link rel="stylesheet" href="styles.css">
-			l_link := l_factory.tag_with_contents ("link", "rel=%"stylesheet%" href=%"styles.css%"", no_content, no_global_attributes, not has_end_tag, not is_self_ending, suppress_newlines)
+			l_link := l_factory.tag_contented ("link", "rel=%"stylesheet%" href=%"styles.css%"", no_content, no_global_attributes, not has_end_tag, not is_self_ending, suppress_newlines)
 				-- ... and test ...
 			assert_strings_equal ("link_tag", "<link rel=%"stylesheet%" href=%"styles.css%">", l_link)
 
 				-- Build: <meta charset=utf-8>
-			l_meta := l_factory.tag_with_contents ("meta", "charset=utf-8", no_content, no_global_attributes, not has_end_tag, not is_self_ending, suppress_newlines)
+			l_meta := l_factory.tag_contented ("meta", "charset=utf-8", no_content, no_global_attributes, not has_end_tag, not is_self_ending, suppress_newlines)
 				-- ... and test ...
 			assert_strings_equal ("meta_tag", "<meta charset=utf-8>", l_meta)
 
 				-- <head> ... </head> see `slidy_head_with_content'.
 			l_head_content := l_factory.build_content_as_indented_newlines (<<l_title, l_link, l_meta>>)
-			l_head := l_factory.tag_with_contents ("head", no_manual_attributes, l_head_content, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
+			l_head := l_factory.tag_contented ("head", no_manual_attributes, l_head_content, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
 				-- ... and test ...
 			assert_strings_equal ("head", slidy_head_with_content, l_head)
 
 				-- Build: <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/antelope-canyon.jpg" alt="Photograph of orange rock formations in Antelope Canyon, Arizona by eliyasj" data-caption="Antelope Canyon, Arizona">
 			create l_factory
 			l_factory.set_data_attribute (["caption" ,"Antelope Canyon, Arizona"], "caption-antelope-canyon-arizona")
-			l_img_1 := l_factory.tag_with_contents ("img", "src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/antelope-canyon.jpg%" alt=%"Photograph of orange rock formations in Antelope Canyon, Arizona by eliyasj%"", no_content, l_factory, not has_end_tag, not is_self_ending, suppress_newlines)
+			l_img_1 := l_factory.tag_contented ("img", "src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/antelope-canyon.jpg%" alt=%"Photograph of orange rock formations in Antelope Canyon, Arizona by eliyasj%"", no_content, l_factory, not has_end_tag, not is_self_ending, suppress_newlines)
 				-- ... and test ...
 			assert_strings_equal ("img_1", img_1, l_img_1)
 
 				-- Build: <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/canyonlands.jpg" alt="Broad vista photograph of Canyonlands National Park, Arizona, taken by Charles Martin" data-caption="Canyonlands Vista, Arizona" >
 			create l_factory
 			l_factory.set_data_attribute (["caption" ,"Canyonlands Vista, Arizona"], "caption-antelope-canyon-arizona")
-			l_img_2 := l_factory.tag_with_contents ("img", "src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/canyonlands.jpg%" alt=%"Broad vista photograph of Canyonlands National Park, Arizona, taken by Charles Martin%"", no_content, l_factory, not has_end_tag, not is_self_ending, suppress_newlines)
+			l_img_2 := l_factory.tag_contented ("img", "src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/canyonlands.jpg%" alt=%"Broad vista photograph of Canyonlands National Park, Arizona, taken by Charles Martin%"", no_content, l_factory, not has_end_tag, not is_self_ending, suppress_newlines)
 				-- ... and test ...
 			assert_strings_equal ("img_2", img_2, l_img_2)
 
 				-- Build: <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/mesa-arch.jpg" alt="Photograph looking through Mesa Arch at a sunrise in Moab, Utah, taken by Krasimir Ganchev" data-caption="Mesa Arch sunrise, Moab, Utah">
 			create l_factory
 			l_factory.set_data_attribute (["caption" ,"Mesa Arch sunrise, Moab, Utah"], "caption-antelope-canyon-arizona")
-			l_img_3 := l_factory.tag_with_contents ("img", "src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/mesa-arch.jpg%" alt=%"Photograph looking through Mesa Arch at a sunrise in Moab, Utah, taken by Krasimir Ganchev%"", no_content, l_factory, not has_end_tag, not is_self_ending, suppress_newlines)
+			l_img_3 := l_factory.tag_contented ("img", "src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/mesa-arch.jpg%" alt=%"Photograph looking through Mesa Arch at a sunrise in Moab, Utah, taken by Krasimir Ganchev%"", no_content, l_factory, not has_end_tag, not is_self_ending, suppress_newlines)
 				-- ... and test ...
 			assert_strings_equal ("img_3", img_3, l_img_3)
 
 				-- Build: <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/wave-canyon.jpg" alt="Photograph of wave rock formations in Canyonlands National Park, Arizona, taken by Vanessa Kay" data-caption="Canyonlands, Arizona">
 			create l_factory
 			l_factory.set_data_attribute (["caption" ,"Canyonlands, Arizona"], "caption-antelope-canyon-arizona")
-			l_img_4 := l_factory.tag_with_contents ("img", "src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/wave-canyon.jpg%" alt=%"Photograph of wave rock formations in Canyonlands National Park, Arizona, taken by Vanessa Kay%"", no_content, l_factory, not has_end_tag, not is_self_ending, suppress_newlines)
+			l_img_4 := l_factory.tag_contented ("img", "src=%"https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/wave-canyon.jpg%" alt=%"Photograph of wave rock formations in Canyonlands National Park, Arizona, taken by Vanessa Kay%"", no_content, l_factory, not has_end_tag, not is_self_ending, suppress_newlines)
 				-- ... and test ...
 			assert_strings_equal ("img_4", img_4, l_img_4)
 
 			create l_factory
 			l_figure_content := l_factory.build_content_as_indented_newlines (<<l_img_1, l_img_2, l_img_3, l_img_4>>)
-			l_figure := l_factory.tag_with_contents ("figure", "id=%"slidy%"", l_figure_content, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
+			l_figure := l_factory.tag_contented ("figure", "id=%"slidy%"", l_figure_content, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
 
-			l_div := l_factory.tag_with_contents ("div", "id=%"slidy-container%"", l_figure, no_global_attributes, not has_end_tag, not is_self_ending, not suppress_newlines)
+			l_div := l_factory.tag_contented ("div", "id=%"slidy-container%"", l_figure, no_global_attributes, not has_end_tag, not is_self_ending, not suppress_newlines)
 
-			l_script_1 := l_factory.tag_with_contents ("script", "src=%"cssslidy.js%"", no_content, no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
-			l_script_2 := l_factory.tag_with_contents ("script", Void, "cssSlidy();", no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
+			l_script_1 := l_factory.tag_contented ("script", "src=%"cssslidy.js%"", no_content, no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
+			l_script_2 := l_factory.tag_contented ("script", Void, "cssSlidy();", no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
 
 			l_body := l_head.twin
 			l_body.append_character ('%N')

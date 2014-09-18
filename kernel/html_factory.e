@@ -26,24 +26,102 @@ inherit
 feature -- Access
 
 	html_page (a_body, a_language_code: STRING): STRING
-			-- HTML Page
+			-- <!doctype lang=[a_language_code]/> %N <html> %N [a_body] %N </html>
 		local
 			l_body: STRING
 		do
 			if attached a_body as al_body then
-				l_body := tag_with_contents ("body", no_manaul_attributes, al_body, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
+				l_body := tag_contented (Body_tag_name, no_manaul_attributes, al_body, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
 			else
 				l_body := a_body
 			end
-			Result := tag_with_contents ("!doctype", "html", no_manaul_attributes, no_global_attributes, False, False, False)
+			Result := tag_contented ("!doctype", Html_tag_name, no_manaul_attributes, no_global_attributes, False, False, False)
 			if not a_language_code.is_empty then
-				Result.append_string (tag_with_contents (html_tag, "lang=" + a_language_code, l_body, no_global_attributes, True, False, False))
+				Result.append_string (tag_contented (Html_tag_name, "lang=" + a_language_code, l_body, no_global_attributes, True, False, False))
 			else
-				Result.append_string (tag_with_contents (html_tag, no_manaul_attributes, l_body, no_global_attributes, True, False, False))
+				Result.append_string (tag_contented (Html_tag_name, no_manaul_attributes, l_body, no_global_attributes, True, False, False))
 			end
 		end
 
-	html_tag: STRING = "html"
+feature -- Access: <form> ... </form>
+
+	form (a_content: STRING; a_manual_attributes: detachable STRING): STRING
+			-- <form [a_manual_attributes]> %N [a_content] %N </form>
+		do
+			Result := tag_contented_no_global_attributes (form_tag_name, a_manual_attributes, a_content)
+		end
+
+	input_text_field (a_name_attribute: STRING): STRING
+			-- <input type="text" name="[a_name_attribute]"/>
+		do
+			Result := tag_no_content_self_ending (input_tag_name, "type=%"text%" name=%"" + a_name_attribute + "%"", no_global_attributes)
+		end
+
+	submit_button (a_button_caption: STRING): STRING
+			-- <input type="submit" value="[a_button_caption]/>"
+		do
+			Result := tag_no_content_self_ending (input_tag_name, "type=%"submit%" value=%"" + a_button_caption + "%"", no_global_attributes)
+		end
+
+feature -- Access: <head> ... </head>
+
+	head (a_content: STRING): STRING
+			-- <head> [a_content] </head>
+		do
+			Result := tag_contented (head_tag_name, Void, indent_one_level_and_then_newline (a_content), no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
+		end
+
+feature -- Access: <title> ... </title>
+
+	title (a_content: STRING): STRING
+			-- <title> [a_content] </title>
+		do
+			Result := tag_contented (title_tag_name, Void, a_content, no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
+		end
+
+feature -- Access: <[tag]> ... </[tag]> w/Content
+
+	tag_contented_no_global_attributes (a_tag: STRING; a_manual_attributes: detachable STRING; a_content: STRING): STRING
+			-- <[a_tag] [a_manual_attributes]> [a_content] </[a_tag]>, but with `no_global_attributes'
+		do
+			Result := tag_contented (a_tag, a_manual_attributes, a_content, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
+		end
+
+	tag_contented (a_tag: STRING; a_manual_attributes, a_contents: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_has_end_tag, a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
+			--  <[a_tag] [a_manual_attributes]> [a_content] </[a_tag]>
+		note
+			purpose: "[
+				To build an HTML `a_tag' completely, with Start-and-End tags, including attributes
+				(both those that are by specification and any manual or corner-case attributes) and
+				also including any content between the tags.
+				]"
+		do
+			Result := start_tag (a_tag, a_manual_attributes, a_attributes, a_is_self_ending, a_suppress_newlines)
+			Result.append_string (a_contents)
+			if a_has_end_tag then
+				Result.append_string (end_tag (a_tag))
+			end
+		end
+
+feature -- Access: <[tag]> ... </[tag]> w/o-Content
+
+	tag_no_content (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES): STRING
+			-- ???
+		do
+			Result := tag_contented (a_tag, a_manual_attributes, Void, Void, has_end_tag, not is_self_ending, not suppress_newlines)
+		end
+
+	tag_no_content_inline (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES): STRING
+			-- ???
+		do
+			Result := tag_contented (a_tag, a_manual_attributes, Void, Void, has_end_tag, not is_self_ending, suppress_newlines)
+		end
+
+	tag_no_content_self_ending (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES): STRING
+			-- ???
+		do
+			Result := tag_contented (a_tag, a_manual_attributes, Void, Void, not has_end_tag, is_self_ending, suppress_newlines)
+		end
 
 feature -- Basic Operations
 
@@ -78,26 +156,12 @@ feature -- Basic Operations
 				Result.prepend_character (tab)
 			end
 		ensure
-			has_tab_count: Result.occurrences (tab) = a_tab_count
+			has_tab_count: Result.occurrences (tab) >= a_tab_count
 		end
 
-	tag_with_contents (a_tag: STRING; a_manual_attributes, a_contents: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_has_end_tag, a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
-			-- Start and End tags with `a_contents' between.
-		note
-			purpose: "[
-				To build an HTML `a_tag' completely, with Start-and-End tags, including attributes
-				(both those that are by specification and any manual or corner-case attributes) and
-				also including any content between the tags.
-				]"
-		do
-			Result := start_tag (a_tag, a_manual_attributes, a_attributes, a_is_self_ending, a_suppress_newlines)
-			Result.append_string (a_contents)
-			if a_has_end_tag then
-				Result.append_string (end_tag (a_tag))
-			end
-		end
+feature {NONE} -- Implementation: Tag Primitives
 
-	start_tag (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
+	frozen start_tag (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
 			-- Start tag based on `a_tag'.
 		local
 			l_result,
@@ -135,7 +199,7 @@ feature -- Basic Operations
 			end
 		end
 
-	end_tag (a_tag: STRING): STRING
+	frozen end_tag (a_tag: STRING): STRING
 			-- End tag based on `a_tag'.
 		do
 			create Result.make (a_tag.count + 3)
@@ -144,37 +208,5 @@ feature -- Basic Operations
 			Result.append_string (a_tag)
 			Result.append_character (right_angle)
 		end
-
-feature {NONE} -- Implementation: Constants
-
-	left_angle: CHARACTER_8 = '<'
-	right_angle: CHARACTER_8 = '>'
-	end_slash: CHARACTER_8 = '/'
-	space: CHARACTER_8 = ' '
-	newline: CHARACTER_8 = '%N'
-	tab: CHARACTER_8 = '%T'
-
-	english_code: STRING = "en"
-
-	no_body: STRING = ""
-
-	no_content: detachable STRING
-
-	no_manual_attributes: detachable STRING
-
-	has_end_tag: BOOLEAN = True
-
-	is_self_ending: BOOLEAN = True
-
-	suppress_newlines: BOOLEAN = True
-
-	no_manaul_attributes: detachable STRING
-			-- Constants used to indicate how there are no manually determined attributes for the tag under construction.
-
-	no_tag_content: detachable STRING
-			-- Constants used to indicate how there are no contents for the tag under construction.
-
-	no_global_attributes: detachable HTML_GLOBAL_ATTRIBUTES
-			-- Constants used to indicate how there are no global attributes for the tag under construction.
 
 end

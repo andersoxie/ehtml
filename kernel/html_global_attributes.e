@@ -37,9 +37,8 @@ note
 deferred class
 	HTML_GLOBAL_ATTRIBUTES
 
-
 inherit
-	ANY
+	HTML_CONSTANTS
 		redefine
 			default_create
 		end
@@ -711,20 +710,6 @@ feature {NONE} -- Implementation: Basic Operations
 			has_value: Result.has_substring (a_value)
 			is_valid_quotations: a_is_quoted implies Result.has_substring ("%"" + a_value + "%"")
 			has_equality_symbol: Result.has ('=')
-		end
-
-feature {NONE} -- Implementation: Constants
-
-	space_8: CHARACTER_8
-			-- Space character constant for Current.
-		once
-			Result := {HTML_CONSTANTS}.space_8
-		end
-
-	frozen is_double_quoted: BOOLEAN
-			-- Named BOOLEAN constant indicative of some item wrapped in double-quotes.
-		once
-			Result := {HTML_CONSTANTS}.is_double_quoted
 		end
 
 invariant
