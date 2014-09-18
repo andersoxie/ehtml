@@ -21,7 +21,7 @@ feature -- Access
 			-- Traffic-cop for `a_request' from client.
 		do
 			if attached {WSF_STRING} a_request.path_parameter ("user") as al_user and then
-					attached {STRING_8} html_decoded_string (al_user.value) as al_user_name then
+					attached html_decoded_string (al_user.value) as al_user_name then
 				if a_request.is_request_method (Get_method_name) then
 					Result := user_message_get (al_user_name, a_request)
 				elseif a_request.is_request_method (Post_method_name) then
