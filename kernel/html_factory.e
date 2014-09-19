@@ -2,6 +2,11 @@ note
 	description: "[
 		Representation of an HTML Factory
 		]"
+	purpose: "[
+		To provide a resource for generation of HTML tags and other asundry bits
+		by operational EWF web sites and provided in such a way as to minimize
+		the amount of object creation and computation required for generation.
+		]"
 	how: "[
 		By a supply of start-and-end tags, which are appended, where appending is
 		the fastest and most efficient way to build strings.
@@ -20,6 +25,8 @@ feature -- Access
 
 	html_page (a_content, a_language_code, a_doctype_attributes: detachable STRING): STRING
 			-- <!doctype lang=[a_language_code]/> %N <html> %N [a_body] %N </html>
+		require
+			valid_lang_code: attached a_language_code implies language_codes.has (a_language_code)
 		local
 			l_doctype,
 			l_html: STRING
@@ -31,7 +38,7 @@ feature -- Access
 			Result.append_character ('>')
 			Result.append_character ('%N')
 			if attached a_language_code and then not a_language_code.is_empty then
-				l_html := tag_contented (Html_tag_name, "lang=" + a_language_code, a_content, no_global_attributes, has_end_tag, not suppress_newlines)
+				l_html := tag_contented (Html_tag_name, tag_attribute ("lang", a_language_code), a_content, no_global_attributes, has_end_tag, not suppress_newlines)
 			else
 				l_html := tag_contented (Html_tag_name, no_manaul_attributes, a_content, no_global_attributes, has_end_tag, not suppress_newlines)
 			end
@@ -56,7 +63,7 @@ feature -- Access: <form> ... </form>
 	input_text_field (a_name_attribute: STRING): STRING
 			-- <input type="text" name="[a_name_attribute]"/>
 		do
-			Result := tag_no_content_self_ending (input_tag_name, "type=%"text%" name=%"" + a_name_attribute + "%"", no_global_attributes)
+			Result := tag_no_content_self_ending (input_tag_name, tag_attribute_quoted_value ("type", "text") + " " + tag_attribute_quoted_value ("name", a_name_attribute), no_global_attributes)
 		ensure
 			valid_input_text: input_regex.matches (Result)
 		end
@@ -64,7 +71,7 @@ feature -- Access: <form> ... </form>
 	submit_button (a_button_caption: STRING): STRING
 			-- <input type="submit" value="[a_button_caption]/>"
 		do
-			Result := tag_no_content_self_ending (input_tag_name, "type=%"submit%" value=%"" + a_button_caption + "%"", no_global_attributes)
+			Result := tag_no_content_self_ending (input_tag_name, tag_attribute_quoted_value ("type", "submit") + " " + tag_attribute_quoted_value ("value", a_button_caption), no_global_attributes)
 		ensure
 			valid_input_text: input_regex.matches (Result)
 		end
@@ -121,6 +128,8 @@ feature -- Access: <[tag]> ... </[tag]> w/Content
 			if a_has_end_tag then
 				Result.append_string (end_tag (a_tag))
 			end
+		ensure
+			valid_start_end: a_has_end_tag implies (start_end_tag_regex (a_tag)).matches (Result)
 		end
 
 feature -- Access: <[tag]> ... </[tag]> w/o-Content
@@ -201,7 +210,12 @@ feature {NONE} -- Implementation: Tag Primitives
 			else
 				if attached a_manual_attributes then
 					create l_attributes.make_from_string (a_manual_attributes)
-					l_attributes.prepend_character (space)
+					if l_attributes.count > 2 then
+						if not l_attributes [1].is_space then
+							l_attributes.prepend_character (space)
+						end
+						l_attributes.right_adjust
+					end
 				else
 					create l_attributes.make_empty
 				end
@@ -227,6 +241,29 @@ feature {NONE} -- Implementation: Tag Primitives
 			Result.append_character (end_slash)
 			Result.append_string (a_tag)
 			Result.append_character (right_angle)
+		end
+
+feature {NONE} -- Implementation: Attribute Primitives
+
+	tag_attribute_quoted_value (a_key, a_value: STRING): STRING
+			-- Create an HTML <tag [a_key]="[a_value]" ...> attribute.
+		do
+			Result := tag_attribute (a_key, "%"" + a_value + "%"")
+		end
+
+	tag_attribute (a_key, a_value: STRING): STRING
+			-- Create an HTML <tag [a_key]=[a_value] ...> attribute.
+		do
+			Result := " "
+			Result.append_string (a_key)
+			Result.append_character ('=')
+			Result.append_string (a_value)
+			Result.append_character (' ')
+		ensure
+			has_key: Result.has_substring (a_key)
+			has_value: Result.has_substring (a_value)
+			has_equality: Result.has_substring ("=")
+			padded: Result [1].is_space and Result [Result.count].is_space
 		end
 
 end
