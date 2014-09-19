@@ -6,6 +6,15 @@ note
 		To demonstrate in a test environment, the eHTML library producing (generating)
 		the appropriate code to replicate the EWF tutorial "hello" application.
 		]"
+	how: "[
+		This test demonstration is based on the EWF Tutorial "hello" application. The
+		project target is presently located at: "{..}\ewf\examples\tutorial\step_4\hello"
+		
+		This APPLICATION class is roughly modeled after the EWF example, but replaces
+		hand-coded HTML with generated HTML from this library (eHTML). The primary classes
+		to pay attention to are listed in the "?" section below.
+		]"
+	
 	date        : "$Date$"
 	revision    : "$Revision$"
 
@@ -140,4 +149,18 @@ feature {NONE} -- Implementation: Constants
 	user_parameter_keyword: STRING = "user"
 			-- Keyword for "user" parameter.
 
+note
+	copyright: "Copyright (c) 2010-2014, Jinny Corp."
+	copying: "[
+			Duplication and distribution prohibited. May be used only with
+			Jinny Corp. software products, under terms of user license.
+			Contact Jinny Corp. for any other use.
+			]"
+	source: "[
+			Jinny Corp.
+			3587 Oakcliff Road, Doraville, GA 30340
+			Telephone 770-734-9222, Fax 770-734-0556
+			Website http://www.jinny.com
+			Customer support http://support.jinny.com
+		]"
 end

@@ -14,6 +14,11 @@ There are a number of primary classes to pay attention to. Most specifically: HT
 
 The factory class provides the primary means for fast generation of HTML/JS script code. On top of this library, one will want to build another library of reusable class modules where one can quickly assemble sophisticated web sites. Moreover, it is in the class libraries that one builds on top of eHTML that the full power of Eiffel, inheritance, Generics, Agents, Void-safety, and even SCOOP will carry the heaviest load of web site construction.
 
+Compilation
+===========
+
+1. $ISE_USER_FILES Environment Variable: eHTML has a dependency on this environment variable to point at the "encoder" library, where it is stored in the IRON packages directory structure (e.g. $ISE_USER_FILES\14.05\iron\packages\ewf\text\encoder\encoder-safe.ecf). Remaining libraries are pathed with $ISE_EIFFEL or $ISE_LIBRARY.
+
 To-Do's
 =======
 
