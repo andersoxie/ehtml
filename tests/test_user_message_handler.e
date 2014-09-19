@@ -96,7 +96,7 @@ feature -- Access
 		do
 			create Result.make
 			l_body := factory.paragraph ("No message from user '" + Result.html_encoded_string (a_user) + "'.")
-			l_textarea := factory.tag_contented ("textarea", "name=%"message%" rows=%"10%" cols=%"70%"", Void, no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
+			l_textarea := factory.tag_contented ("textarea", "name=%"message%" rows=%"10%" cols=%"70%"", Void, no_global_attributes, has_end_tag, suppress_newlines)
 			l_input := factory.submit_button ("Ok")
 			l_content := l_textarea
 			l_content.append_string (factory.indent_one_level_and_then_newline (l_input))

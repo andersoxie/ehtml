@@ -34,10 +34,12 @@ feature -- Access
 
 	html: STRING
 			-- Main "Hello" web page HTML.
+		local
+			l_content: STRING
 		do
-			Result := hand_coded_html
-			Result.replace_substring_all ("<<HEAD>>", head)
-			Result.replace_substring_all ("<<BODY>>", body)
+			l_content := factory.indent_one_level_and_then_newline (head.twin)
+			l_content.append_string (factory.indent_one_level_and_then_newline (body.twin))
+			Result := factory.html_page (l_content, "en", "html PUBLIC %"-//W3C//DTD XHTML 1.0 Strict//EN%" %"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd%"")
 		end
 
 feature -- Access: Hand-coded HTML
@@ -73,7 +75,7 @@ feature {NONE} -- Implementation
 		do
 			l_content := factory.indent_one_level_and_then_newline (Hello_message_content)
 			l_content.append_string (factory.indent_one_level_and_then_newline (form_hello))
-			Result := factory.tag_contented (body_tag_name, no_manaul_attributes, l_content, no_global_attributes, has_end_tag, not is_self_ending, not suppress_newlines)
+			Result := factory.tag_contented (body_tag_name, no_manaul_attributes, l_content, no_global_attributes, has_end_tag, not suppress_newlines)
 		ensure
 			has_hello_content: Result.has_substring (hello_message_content)
 		end

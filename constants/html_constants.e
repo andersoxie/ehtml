@@ -62,10 +62,65 @@ feature -- Constants: Named Boolean Operators
 			-- Constants used to indicate how there are no global attributes for the tag under construction.
 
 	yes: BOOLEAN = True
+			-- Affirmative.
 
 	no: BOOLEAN
-		do
+			-- Opposite of `yes'.
+		once
 			Result := not yes
+		end
+
+feature -- Regex
+
+	html_regex: RX_PCRE_MATCHER
+			-- <html> pattern matcher.
+		once
+			Result := tag_regex (Html_tag_name)
+		end
+
+	form_regex: RX_PCRE_MATCHER
+			-- <form> pattern matcher.
+		once
+			Result := tag_regex (form_tag_name)
+		end
+
+	input_regex: RX_PCRE_MATCHER
+			-- <input> pattern matcher.
+		once
+			Result := tag_regex (input_tag_name)
+		end
+
+	head_regex: RX_PCRE_MATCHER
+			-- <head> pattern matcher.
+		once
+			Result := tag_regex (head_tag_name)
+		end
+
+	title_regex: RX_PCRE_MATCHER
+			-- <title> pattern matcher.
+		once
+			Result := tag_regex (title_tag_name)
+		end
+
+	paragraph_regex: RX_PCRE_MATCHER
+			-- <paragraph> pattern matcher.
+		once
+			Result := tag_regex (paragraph_tag_name)
+		end
+
+feature {NONE} -- Implementation: Regex
+
+	tag_regex (a_tag: STRING): RX_PCRE_MATCHER
+		local
+			l_tag: STRING
+		do
+			l_tag := "<<<TAG_NAME>>\b[^>]*>(*?)</<<TAG_NAME>>>"
+			l_tag.replace_substring_all ("<<TAG_NAME>>", a_tag)
+			create Result.make
+			Result.set_case_insensitive (True)
+			Result.compile (l_tag)
+		ensure
+			compiles: Result.is_compiled
 		end
 
 feature -- Constants: Tag names
