@@ -10,15 +10,47 @@ class
 
 inherit
 	WSF_URI_TEMPLATE_RESPONSE_HANDLER
+		rename
+			response as user_request_response
+		redefine
+			default_create
+		end
 
 	HTML_CONSTANTS
+		undefine
+			default_create
+		end
 
 	HTML_HELPER
+		undefine
+			default_create
+		end
+
+feature {NONE} -- Initialization
+
+	default_create
+			-- <Precursor>
+		do
+			create factory
+		end
 
 feature -- Access
 
-	response (a_request: WSF_REQUEST): WSF_RESPONSE_MESSAGE
-			-- Traffic-cop for `a_request' from client.
+	user_request_response (a_request: WSF_REQUEST): WSF_RESPONSE_MESSAGE
+			-- Process /user/{user}/message/ `a_request' from client and respond with Result response message.
+		note
+			description: "[
+				Calculated response to `a_request' based on "user-routed" message.
+				]"
+			purpose: "[
+				To examine user-routed requests and respond with the appropriate HTML response.
+				]"
+			how: "[
+				By examination of `a_request.path_parameter' (i.e. "route") and responding. Messages
+				not being routed with "user" parameter are given an "error response", but all others
+				are handled with a "Traffic-cop" (i.e. if-construct) conditional. Messages other than
+				GET or POST are classified as unsupported and responded to appropriately.
+				]"
 		do
 			if attached {WSF_STRING} a_request.path_parameter ("user") as al_user and then
 					attached html_decoded_string (al_user.value) as al_user_name then
@@ -35,6 +67,7 @@ feature -- Access
 		end
 
 	missing_argument_response (m: READABLE_STRING_8; req: WSF_REQUEST): WSF_PAGE_RESPONSE
+			-- Respond to messages routed here but not "user" parameterized.
 		do
 			create Result.make
 			Result.set_status_code ({HTTP_STATUS_CODE}.bad_request)
@@ -42,6 +75,7 @@ feature -- Access
 		end
 
 	unsupported_method_response (req: WSF_REQUEST): WSF_PAGE_RESPONSE
+			-- Respond to messages routed as "user", but not GET or POST.
 		do
 			create Result.make
 			Result.set_status_code ({HTTP_STATUS_CODE}.bad_request)
@@ -49,22 +83,30 @@ feature -- Access
 		end
 
 
-	user_message_get (a_user: READABLE_STRING_32; req: WSF_REQUEST): WSF_HTML_PAGE_RESPONSE
-			-- Response to client to get user message.
+	user_message_get (a_user: READABLE_STRING_32; a_request: WSF_REQUEST): WSF_HTML_PAGE_RESPONSE
+			-- Respond with a "Get-message" form.
+		note
+			EIS: "name=getting_user_message", "protocol=URI", "src=file:///./tests/getting_user_message.png"
 		local
 			l_body: STRING_8
+			l_form,
+			l_textarea,
+			l_input,
+			l_content: STRING
 		do
 			create Result.make
-			l_body := "<p>No message from user '" + Result.html_encoded_string (a_user) + "'.</p>"
-			l_body.append ("<form action=%""+ req.request_uri +"%" method=%"POST%">")
-			l_body.append ("<textarea name=%"message%" rows=%"10%" cols=%"70%" ></textarea>")
-			l_body.append ("<input type=%"submit%" value=%"Ok%" />")
-			l_body.append ("</form>")
+			l_body := factory.paragraph ("No message from user '" + Result.html_encoded_string (a_user) + "'.")
+			l_textarea := factory.tag_contented ("textarea", "name=%"message%" rows=%"10%" cols=%"70%"", Void, no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
+			l_input := factory.submit_button ("Ok")
+			l_content := l_textarea
+			l_content.append_string (factory.indent_one_level_and_then_newline (l_input))
+			l_content := factory.indent_one_level_and_then_newline (l_content)
+			l_body.append_string (factory.form (l_content, "action=%""+ a_request.request_uri +"%" method=%"POST%""))
 			Result.set_body (l_body)
 		end
 
 	user_message_response_post (a_user: READABLE_STRING_32; a_request: WSF_REQUEST): WSF_HTML_PAGE_RESPONSE
-			-- Response to client based on `a_request' to show message fetched from `a_user'.
+			-- Respond with the "user-message" response in a <textarea>.
 		local
 			l_body: STRING_8
 		do
@@ -77,5 +119,10 @@ feature -- Access
 			end
 			Result.set_body (l_body)
 		end
+
+feature {NONE} -- Implementation
+
+	factory: HTML_FACTORY
+			-- HTML Factory for Current.
 
 end

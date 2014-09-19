@@ -79,6 +79,14 @@ feature -- Access: <title> ... </title>
 			Result := tag_contented (title_tag_name, Void, a_content, no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
 		end
 
+feature -- Access: <p> ... </p>
+
+	paragraph (a_content: STRING): STRING
+			-- <p> [a_content] </p>
+		do
+			Result := tag_contented (paragraph_tag_name, Void, a_content, no_global_attributes, has_end_tag, not is_self_ending, suppress_newlines)
+		end
+
 feature -- Access: <[tag]> ... </[tag]> w/Content
 
 	tag_contented_no_global_attributes (a_tag: STRING; a_manual_attributes: detachable STRING; a_content: STRING): STRING
