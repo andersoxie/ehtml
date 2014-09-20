@@ -3,13 +3,12 @@ note
 		Representation of an HTML Factory
 		]"
 	purpose: "[
-		To provide a resource for generation of HTML tags and other asundry bits
-		by operational EWF web sites and provided in such a way as to minimize
-		the amount of object creation and computation required for generation.
+		To provide HTML-5, CSS-3, and Java-script generation facilities through
+		Eiffel class API in a factory paradigm.
 		]"
 	how: "[
-		By a supply of start-and-end tags, which are appended, where appending is
-		the fastest and most efficient way to build strings.
+		By a factory-based API to minimize object creation and maximize in-memory
+		code generation.
 		]"
 	author: "Larry Rix"
 	date: "$Date$"
@@ -25,8 +24,16 @@ feature -- Access
 
 	html_page (a_content, a_language_code, a_doctype_attributes: detachable STRING): STRING
 			-- <!doctype lang=[a_language_code]/> %N <html> %N [a_body] %N </html>
+		note
+			description: "[
+				Ready-to-Serve HTML page, containing `a_content', for `a_language_code' and
+				having `a_doctype_attributes'.
+				]"
+			todos: "[
+
+				]"
 		require
-			valid_lang_code: attached a_language_code implies language_codes.has (a_language_code)
+			valid_lang_code: attached a_language_code implies attached language_codes.has_item (a_language_code)
 		local
 			l_doctype,
 			l_html: STRING
@@ -37,10 +44,11 @@ feature -- Access
 			end
 			Result.append_character ('>')
 			Result.append_character ('%N')
+			set_has_end_tag_and_not_suppress_newlines
 			if attached a_language_code and then not a_language_code.is_empty then
-				l_html := tag_contented (Html_tag_name, tag_attribute ("lang", a_language_code), a_content, no_global_attributes, has_end_tag, not suppress_newlines)
+				l_html := tag_contented (Html_tag_name, tag_attribute ("lang", a_language_code), a_content, no_global_attributes)
 			else
-				l_html := tag_contented (Html_tag_name, no_manaul_attributes, a_content, no_global_attributes, has_end_tag, not suppress_newlines)
+				l_html := tag_contented (Html_tag_name, no_manaul_attributes, a_content, no_global_attributes)
 			end
 			check valid_html: html_regex.matches (l_html) end
 			Result.append_string (l_html)
@@ -81,7 +89,8 @@ feature -- Access: <head> ... </head>
 	head (a_content: STRING): STRING
 			-- <head> [a_content] </head>
 		do
-			Result := tag_contented (head_tag_name, Void, indent_one_level_and_then_newline (a_content), no_global_attributes, has_end_tag, not suppress_newlines)
+			set_has_end_tag_and_not_suppress_newlines
+			Result := tag_contented (head_tag_name, Void, indent_one_level_and_then_newline (a_content), no_global_attributes)
 		ensure
 			valid_head: head_regex.matches (Result)
 		end
@@ -91,7 +100,8 @@ feature -- Access: <title> ... </title>
 	title (a_content: STRING): STRING
 			-- <title> [a_content] </title>
 		do
-			Result := tag_contented (title_tag_name, Void, a_content, no_global_attributes, has_end_tag, suppress_newlines)
+			set_has_end_tag_and_suppress_newlines
+			Result := tag_contented (title_tag_name, Void, a_content, no_global_attributes)
 		ensure
 			valid_title: title_regex.matches (Result)
 		end
@@ -101,7 +111,8 @@ feature -- Access: <p> ... </p>
 	paragraph (a_content: STRING): STRING
 			-- <p> [a_content] </p>
 		do
-			Result := tag_contented (paragraph_tag_name, Void, a_content, no_global_attributes, has_end_tag, suppress_newlines)
+			set_has_end_tag_and_suppress_newlines
+			Result := tag_contented (paragraph_tag_name, Void, a_content, no_global_attributes)
 		ensure
 			valid_paragrah: paragraph_regex.matches (Result)
 		end
@@ -111,10 +122,11 @@ feature -- Access: <[tag]> ... </[tag]> w/Content
 	tag_contented_no_global_attributes (a_tag: STRING; a_manual_attributes: detachable STRING; a_content: STRING): STRING
 			-- <[a_tag] [a_manual_attributes]> [a_content] </[a_tag]>, but with `no_global_attributes'
 		do
-			Result := tag_contented (a_tag, a_manual_attributes, a_content, no_global_attributes, has_end_tag, not suppress_newlines)
+			set_has_end_tag_and_not_suppress_newlines
+			Result := tag_contented (a_tag, a_manual_attributes, a_content, no_global_attributes)
 		end
 
-	tag_contented (a_tag: STRING; a_manual_attributes, a_contents: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_has_end_tag, a_suppress_newlines: BOOLEAN): STRING
+	tag_contented (a_tag: STRING; a_manual_attributes, a_contents: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES): STRING
 			--  <[a_tag] [a_manual_attributes]> [a_content] </[a_tag]>
 		note
 			purpose: "[
@@ -123,33 +135,112 @@ feature -- Access: <[tag]> ... </[tag]> w/Content
 				also including any content between the tags.
 				]"
 		do
-			Result := start_tag (a_tag, a_manual_attributes, a_attributes, not a_has_end_tag, a_suppress_newlines)
+			Result := start_tag (a_tag, a_manual_attributes, a_attributes, not has_end_tag, suppress_newlines)
 			Result.append_string (a_contents)
-			if a_has_end_tag then
+			if has_end_tag then
 				Result.append_string (end_tag (a_tag))
 			end
 		ensure
-			valid_start_end: a_has_end_tag implies (start_end_tag_regex (a_tag)).matches (Result)
+			valid_start_end: has_end_tag implies (start_end_tag_regex (a_tag)).matches (Result)
 		end
+
+	has_end_tag: BOOLEAN
+			-- Flag for `tag_contented' end_tag inclusion or `is_self_ending'.
+
+	has_end_tag_reset: BOOLEAN
+			-- Switch showing `has_end_tag' has been set (False) or reset (True).
+
+	is_self_ending: BOOLEAN
+			-- Toggled form `has_end_tag'.
+		do
+			Result := not has_end_tag
+		end
+
+	suppress_newlines: BOOLEAN
+			-- Flag for `tag_contented' newline suppression.
+
+	suppress_newlines_reset: BOOLEAN
+			-- Switch show `suppress_newlines' has been set (Falase) or reset (True).
 
 feature -- Access: <[tag]> ... </[tag]> w/o-Content
 
 	tag_no_content (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES): STRING
-			-- ???
+			-- <[a_tag] [a_manual_attributes] [a_attributes]> ... no_content ... %N </[a_tag]>
 		do
-			Result := tag_contented (a_tag, a_manual_attributes, Void, Void, has_end_tag, not suppress_newlines)
+			set_has_end_tag_and_not_suppress_newlines
+			Result := tag_contented (a_tag, a_manual_attributes, Void, Void)
 		end
 
 	tag_no_content_inline (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES): STRING
-			-- ???
+			-- <[a_tag] [a_manual_attributes] [a_attributes]> ... no_content ... </[a_tag]>
 		do
-			Result := tag_contented (a_tag, a_manual_attributes, Void, Void, has_end_tag, suppress_newlines)
+			set_has_end_tag_and_suppress_newlines
+			Result := tag_contented (a_tag, a_manual_attributes, Void, Void)
 		end
 
 	tag_no_content_self_ending (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES): STRING
-			-- ???
+			-- <[a_tag] [a_manual_attributes] [a_attributes]/>>
 		do
-			Result := tag_contented (a_tag, a_manual_attributes, Void, Void, not has_end_tag, suppress_newlines)
+			set_has_not_end_tag_and_suppress_newlines
+			Result := tag_contented (a_tag, a_manual_attributes, Void, Void)
+		end
+
+feature -- Settings
+
+	set_has_end_tag_and_suppress_newlines
+			-- Set `has_end_tag' and `suppress_newlines'.
+		do
+			reset_has_end_tag
+			reset_suppress_newlines
+			set_has_end_tag ({HTML_CONSTANTS}.has_end_tag_constant)
+			set_suppress_newlines ({HTML_CONSTANTS}.suppress_newlines_constant)
+		ensure
+			not_reset_has_end_tag: not has_end_tag_reset
+			not_suppress_newlines: not suppress_newlines_reset
+			has_end_tag: has_end_tag
+			suppress_newlines: suppress_newlines
+		end
+
+	set_has_not_end_tag_and_suppress_newlines
+			-- Set not `has_end_tag' and `suppress_newlines'.
+		do
+			reset_has_end_tag
+			reset_suppress_newlines
+			set_has_end_tag (not {HTML_CONSTANTS}.has_end_tag_constant)
+			set_suppress_newlines ({HTML_CONSTANTS}.suppress_newlines_constant)
+		ensure
+			not_reset_has_end_tag: not has_end_tag_reset
+			not_suppress_newlines: not suppress_newlines_reset
+			has_end_tag: not has_end_tag
+			suppress_newlines: suppress_newlines
+		end
+
+	set_has_not_end_tag_and_not_suppress_newlines
+			-- Set not `has_end_tag' and not `suppress_newlines'.
+		do
+			reset_has_end_tag
+			reset_suppress_newlines
+			set_has_end_tag (not {HTML_CONSTANTS}.has_end_tag_constant)
+			set_suppress_newlines (not {HTML_CONSTANTS}.suppress_newlines_constant)
+		ensure
+			not_reset_has_end_tag: not has_end_tag_reset
+			not_suppress_newlines: not suppress_newlines_reset
+			not_has_end_tag: not has_end_tag
+			not_suppress_newlines: not suppress_newlines
+		end
+
+	set_has_end_tag_and_not_suppress_newlines
+			-- Set `has_end_tag' and not `suppress_newlines'.
+		do
+			reset_has_end_tag
+			reset_suppress_newlines
+			set_has_end_tag ({HTML_CONSTANTS}.has_end_tag_constant)
+			set_suppress_newlines (not {HTML_CONSTANTS}.suppress_newlines_constant)
+		ensure
+			not_reset_has_end_tag: not has_end_tag_reset
+			not_suppress_newlines: not suppress_newlines_reset
+			not_has_end_tag: has_end_tag
+			not_suppress_newlines: not suppress_newlines
 		end
 
 feature -- Basic Operations
@@ -186,6 +277,54 @@ feature -- Basic Operations
 			end
 		ensure
 			has_tab_count: Result.occurrences (tab) >= a_tab_count
+		end
+
+feature {NONE} -- Implementation: Settings
+
+	set_has_end_tag (a_has_end_tag: like has_end_tag)
+			-- Set `has_end_tag' with `a_has_end_tag'.
+		require
+			is_reset: has_end_tag_reset
+		do
+			has_end_tag := a_has_end_tag
+			has_end_tag_reset := False
+		ensure
+			has_end_tag_set: has_end_tag = a_has_end_tag
+			not_reset: not has_end_tag_reset
+		end
+
+	reset_has_end_tag
+			-- Reset `has_end_tag' (default=False)
+		require
+			not_reset: not has_end_tag_reset
+		do
+			has_end_tag := False
+			has_end_tag_reset := True
+		ensure
+			has_end_tag_reset: not has_end_tag implies has_end_tag_reset
+		end
+
+	set_suppress_newlines (a_suppress_newlines: like suppress_newlines)
+			-- Set `has_end_tag' with `a_has_end_tag'.
+		require
+			is_reset: suppress_newlines_reset
+		do
+			suppress_newlines := a_suppress_newlines
+			suppress_newlines_reset := False
+		ensure
+			suppress_newlines_set: suppress_newlines = a_suppress_newlines
+			not_reset: not suppress_newlines_reset
+		end
+
+	reset_suppress_newlines
+			-- Reset `suppress_newlines' (default=False)
+		require
+			not_reset: not suppress_newlines_reset
+		do
+			suppress_newlines := False
+			suppress_newlines_reset := True
+		ensure
+			suppress_newlines_reset: not suppress_newlines implies suppress_newlines_reset
 		end
 
 feature {NONE} -- Implementation: Tag Primitives
@@ -266,4 +405,18 @@ feature {NONE} -- Implementation: Attribute Primitives
 			padded: Result [1].is_space and Result [Result.count].is_space
 		end
 
+note
+	copyright: "Copyright (c) 2010-2014, Jinny Corp."
+	copying: "[
+			Duplication and distribution prohibited. May be used only with
+			Jinny Corp. software products, under terms of user license.
+			Contact Jinny Corp. for any other use.
+			]"
+	source: "[
+			Jinny Corp.
+			3587 Oakcliff Road, Doraville, GA 30340
+			Telephone 770-734-9222, Fax 770-734-0556
+			Website http://www.jinny.com
+			Customer support http://support.jinny.com
+		]"
 end

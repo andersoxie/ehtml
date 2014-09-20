@@ -39,18 +39,8 @@ feature -- Access
 		do
 			l_content := factory.indent_one_level_and_then_newline (head.twin)
 			l_content.append_string (factory.indent_one_level_and_then_newline (body.twin))
-			Result := factory.html_page (l_content, "en", "html PUBLIC %"-//W3C//DTD XHTML 1.0 Strict//EN%" %"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd%"")
+			Result := factory.html_page (l_content, factory.english_code, "html PUBLIC %"-//W3C//DTD XHTML 1.0 Strict//EN%" %"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd%"")
 		end
-
-feature -- Access: Hand-coded HTML
-
-	hand_coded_html: STRING = "[
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-	<html xmlns="http://www.w3.org/1999/xhtml">
-		<<HEAD>>
-		<<BODY>>
-	</html>
-]"
 
 feature {NONE} -- Implementation
 
@@ -63,10 +53,13 @@ feature {NONE} -- Implementation
 	title: STRING
 			-- Title Current.
 		do
-			Result := factory.title ("EWF tutorial / Hello World!")
+			Result := factory.title (title_string)
 		ensure
-			right_content: Result.same_string ("<title>EWF tutorial / Hello World!</title>")
+			has_title: Result.has_substring (title_string)
 		end
+
+	title_string: STRING = "EWF tutorial / Hello World!"
+			-- Title of this page.
 
 	body: STRING
 			-- Body of Current
@@ -75,7 +68,8 @@ feature {NONE} -- Implementation
 		do
 			l_content := factory.indent_one_level_and_then_newline (Hello_message_content)
 			l_content.append_string (factory.indent_one_level_and_then_newline (form_hello))
-			Result := factory.tag_contented (body_tag_name, no_manaul_attributes, l_content, no_global_attributes, has_end_tag, not suppress_newlines)
+			factory.set_has_end_tag_and_not_suppress_newlines
+			Result := factory.tag_contented (body_tag_name, no_manaul_attributes, l_content, no_global_attributes)
 		ensure
 			has_hello_content: Result.has_substring (hello_message_content)
 		end
@@ -116,4 +110,18 @@ feature {NONE} -- Implementation: Factories
 	factory: HTML_FACTORY
 			-- Factory for current
 
+;note
+	copyright: "Copyright (c) 2010-2014, Jinny Corp."
+	copying: "[
+			Duplication and distribution prohibited. May be used only with
+			Jinny Corp. software products, under terms of user license.
+			Contact Jinny Corp. for any other use.
+			]"
+	source: "[
+			Jinny Corp.
+			3587 Oakcliff Road, Doraville, GA 30340
+			Telephone 770-734-9222, Fax 770-734-0556
+			Website http://www.jinny.com
+			Customer support http://support.jinny.com
+		]"
 end
