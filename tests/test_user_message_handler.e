@@ -89,14 +89,14 @@ feature -- Access
 			EIS: "name=getting_user_message", "protocol=URI", "src=file:///./tests/getting_user_message.png"
 		local
 			l_body: STRING_8
+			l_form,
 			l_textarea,
 			l_input,
 			l_content: STRING
 		do
 			create Result.make
 			l_body := factory.paragraph ("No message from user '" + Result.html_encoded_string (a_user) + "'.")
-			factory.set_has_end_tag_and_suppress_newlines
-			l_textarea := factory.tag_contented ("textarea", "name=%"message%" rows=%"10%" cols=%"70%"", Void, no_global_attributes)
+			l_textarea := factory.tag_contented ("textarea", "name=%"message%" rows=%"10%" cols=%"70%"", Void, no_global_attributes, has_end_tag, suppress_newlines)
 			l_input := factory.submit_button ("Ok")
 			l_content := l_textarea
 			l_content.append_string (factory.indent_one_level_and_then_newline (l_input))
@@ -125,18 +125,4 @@ feature {NONE} -- Implementation
 	factory: HTML_FACTORY
 			-- HTML Factory for Current.
 
-;note
-	copyright: "Copyright (c) 2010-2014, Jinny Corp."
-	copying: "[
-			Duplication and distribution prohibited. May be used only with
-			Jinny Corp. software products, under terms of user license.
-			Contact Jinny Corp. for any other use.
-			]"
-	source: "[
-			Jinny Corp.
-			3587 Oakcliff Road, Doraville, GA 30340
-			Telephone 770-734-9222, Fax 770-734-0556
-			Website http://www.jinny.com
-			Customer support http://support.jinny.com
-		]"
 end
