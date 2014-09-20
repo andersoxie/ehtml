@@ -14,7 +14,40 @@ note
 		hand-coded HTML with generated HTML from this library (eHTML). The primary classes
 		to pay attention to are listed in the "?" section below.
 		]"
-	
+	prerequisites: "[
+		1. Some knowledge of how web client-server communication and programmering works
+			is helpful before attempting to reuse this library. See EIS links that follow
+			for more information.
+		]"
+	EIS: "name=how_browsers_work", "src=http://www.html5rocks.com/en/tutorials/internals/howbrowserswork/", "protocol=URI"
+	cautions: "[
+		1. Object creation is a very inefficient process. Web sites depend on speed. Therefore, creation
+			of large numbers of objects is not recommended for any web application or backend code.
+			The goal of this library is to keep object creation to a minimum. You will want to follow the
+			same advice for your own code as it consumes this library.
+		]"
+	BNF: "[
+		Application ::=
+			Main_application [1]
+			HTML_pages [2]
+			
+		Main_application ::=
+			Wsf_routed_service [3]
+			Wsf_default_service [4]
+			Routing_handlers [5]
+			
+		(*
+		[1] Main_application: In this demo/example, the main application brings together
+				facilities of routing and connections to the default service (e.g. Nino HTTPD).
+		[2] HTML_pages: Pages served consist of either hand-coded or generated HTML. The
+				generated content is facilitated by the features of the HTML_FACTORY in
+				eHTML library.
+		[3] Wsf_routed_service: Provides the setup and service of request-to-response routing.
+		[4] Wsf_default_service: Provides default connector service setup (e.g. Nino, Apache, etc).
+		[5] Routing_handlers: Provides routines as targets for routed calls by WSF_ROUTED_SERVICE
+				through features like map_* (see this class features under "Helper: mapping").
+		*)
+		]"
 	date        : "$Date$"
 	revision    : "$Revision$"
 
@@ -57,6 +90,18 @@ feature -- Execution
 
 	execute_hello (a_request: WSF_REQUEST; a_response: WSF_RESPONSE)
 			-- See `execute_hello' class-feature notes (below).
+		note
+			delete_me: "[
+				NOTE: Delete this code when the GH class is done!
+				
+				Compare this feature to the `response_user', where this feature
+				is using the facilities of the eHTML to generate the page
+				responses Vs. the `response_user', which is still hand-coded.
+				
+				1. 9-LOC Vs. 35-LOC
+				2. Like all nicely derived generation, the eHTML version is more
+					adaptable to changes, both statically and dynamically.
+				]"
 		local
 			l_message: WSF_HTML_PAGE_RESPONSE
 			l_html_response: STRING_8
@@ -67,7 +112,6 @@ feature -- Execution
 			if attached {WSF_STRING} a_request.item (user_parameter_keyword) as al_user then
 				l_html_response := (create {TEST_HELLO_WORLD_RESPONSE_PAGE}).html (al_user)
 			else
-				--| Otherwise, ask for name
 				l_html_response := (create {TEST_HELLO_HOME_PAGE}).html
 			end
 			l_message.set_body (l_html_response)
@@ -125,18 +169,26 @@ feature -- Helper: mapping
 
 	map_agent_uri (a_uri: READABLE_STRING_8; a_action: like {WSF_URI_AGENT_HANDLER}.action; rqst_methods: detachable WSF_REQUEST_METHODS)
 			-- See `map_agent_uri' class-feature notes (below).
+		note
+			purpose: "[
+				To map a direct call to */hello --> particular feature (e.g. `execute_hello')
+				]"
 		do
 			router.map_with_request_methods (create {WSF_URI_MAPPING}.make (a_uri, create {WSF_URI_AGENT_HANDLER}.make (a_action)), rqst_methods)
 		end
 
 	map_agent_uri_template_response (a_uri_template: READABLE_STRING_8; a_action: like {WSF_URI_TEMPLATE_RESPONSE_AGENT_HANDLER}.action; rqst_methods: detachable WSF_REQUEST_METHODS)
 			-- See `map_agent_uri_template_response' class-feature notes (below).
+		note
+			purpose: "[
+				To map GET operation templates like "/users/{user}/{?op}" to features like `response_user'.
+				]"
 		do
 			router.map_with_request_methods (create {WSF_URI_TEMPLATE_MAPPING}.make (a_uri_template, create {WSF_URI_TEMPLATE_RESPONSE_AGENT_HANDLER}.make (a_action)), rqst_methods)
 		end
 
 	map_uri_template (a_uri_template: READABLE_STRING_8; a_handler: WSF_URI_TEMPLATE_HANDLER; a_request_methods: detachable WSF_REQUEST_METHODS)
-			-- ???
+			-- Map URI requests with `a_uri_template' mask to `a_handler'
 		do
 			router.map_with_request_methods (create {WSF_URI_TEMPLATE_MAPPING}.make (a_uri_template, a_handler), a_request_methods)
 		end
