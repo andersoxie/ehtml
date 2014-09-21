@@ -128,6 +128,7 @@ feature -- Response: User
 			l_body_html: STRING_8
 			l_username: STRING_32
 		do
+			create l_response_html.make
 			if attached {WSF_STRING} a_request.path_parameter (user_parameter_keyword) as al_user then
 				l_username := (create {HTML_ENCODER}).general_decoded_string (al_user.value)
 				if
@@ -135,21 +136,15 @@ feature -- Response: User
 				then
 					if al_op_parm.is_case_insensitive_equal (quit_operation_keyword) then
 						create l_redirection_response.make (a_request.script_url ("/hello"), 3)
-						create l_response_html.make
 						l_redirection_response.set_title ("Bye " + l_response_html.html_encoded_string (l_username))
-						l_redirection_response.set_body ("Bye " + l_response_html.html_encoded_string (l_username) + ",<br/> see you soon.<p>You will be redirected to " +
-										l_redirection_response.url_location + " in " + l_redirection_response.delay.out + " second(s) ...</p>"
-								)
+						l_redirection_response.set_body ((create {TEST_REDIRECTION_RESPONSE_PAGE}).body_content (l_response_html.html_encoded_string (l_username), l_redirection_response.url_location, l_redirection_response.delay))
 						Result := l_redirection_response
 					else
-						create l_response_html.make
 						l_response_html.set_title ("Bad request")
 						l_response_html.set_body ("Bad request: unknown operation '" + al_op_parm.url_encoded_value + "'.")
 						Result := l_response_html
 					end
 				else
-					create l_response_html.make
-
 					l_body_html := "<p>User <em>'" + l_response_html.html_encoded_string (l_username)  + "'</em>!</p>"
 					l_body_html.append ("Display a <a href=%"/users/" + al_user.url_encoded_value + "/message/%">message</a></p>")
 					l_body_html.append ("<p>Click <a href=%"/users/" + al_user.url_encoded_value + "/?op=" + quit_operation_keyword + "%">here</a> to quit.</p>")
@@ -158,7 +153,6 @@ feature -- Response: User
 					Result := l_response_html
 				end
 			else
-				create l_response_html.make
 				l_response_html.set_title ("Bad request")
 				l_response_html.set_body ("Bad request: missing user parameter")
 				Result := l_response_html
