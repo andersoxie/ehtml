@@ -715,10 +715,26 @@ feature {NONE} -- Implementation: Basic Operations
 invariant
 	valid_class_attribute_value: attached class_attribute_value as al_value implies is_valid_attribute_value (al_value)
 	valid_access_key_attribute_value: attached access_key_attribute_value as al_value implies is_valid_attribute_value (al_value)
---	valid_data_values: data_attributes_hash.count > 0 implies
---						across data_attributes_hash as ic_data all
---							attached {like data_attribute_value_anchor} ic_data.item as al_data and then
---								is_valid_attribute_value (al_data.attribute_value)
---						end
 
+note
+	copyright: "[
+			Eiffel Forum License, version 2
+
+			Permission is hereby granted to use, copy, modify and/or distribute
+			this package, provided that: copyright notices are retained unchanged,
+			any distribution of this package, whether modified or not, includes
+			this license text.  Permission is hereby also granted to distribute
+			binary programs which depend on this package. If the binary program
+			depends on a modified version of this package, you are encouraged to
+			publicly release the modified version of this package.
+			***********************
+
+			THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT WARRANTY. ANY EXPRESS OR
+			IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+			WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+			DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR
+			ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+			DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THIS PACKAGE.
+			***********************
+		]"
 end
