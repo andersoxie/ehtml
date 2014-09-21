@@ -11,6 +11,11 @@ note
 		By a supply of start-and-end tags, which are appended, where appending is
 		the fastest and most efficient way to build strings.
 		]"
+	glossary: "[Glossary of Terms]"
+	term: "[
+		EWF: Eiffel Web Framework
+		]"
+	EIS: "name=EWF", "src=http://eiffelwebframework.github.io/EWF/getting-started/", "protocol=URI"
 	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
@@ -180,7 +185,7 @@ feature -- Basic Operations
 	indent_to_level (a_item: STRING; a_tab_count: INTEGER): STRING
 			-- Indent `a_item' `a_tab_level' levels (i.e. TAB in `n' number of times).
 		do
-			Result := a_item
+			Result := a_item.twin
 			across 1 |..| a_tab_count as ic_counter loop
 				Result.prepend_character (tab)
 			end
@@ -266,4 +271,25 @@ feature {NONE} -- Implementation: Attribute Primitives
 			padded: Result [1].is_space and Result [Result.count].is_space
 		end
 
+note
+	copyright: "[
+			Eiffel Forum License, version 2
+
+			Permission is hereby granted to use, copy, modify and/or distribute
+			this package, provided that: copyright notices are retained unchanged,
+			any distribution of this package, whether modified or not, includes
+			this license text.  Permission is hereby also granted to distribute
+			binary programs which depend on this package. If the binary program
+			depends on a modified version of this package, you are encouraged to
+			publicly release the modified version of this package.
+			***********************
+
+			THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT WARRANTY. ANY EXPRESS OR
+			IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+			WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+			DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR
+			ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+			DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THIS PACKAGE.
+			***********************
+		]"
 end

@@ -1,14 +1,21 @@
 ${NOTE_KEYWORD}
-	copyright: "Copyright (c) 2010-${YEAR}, Jinny Corp."
-	copying: "[
-			Duplication and distribution prohibited. May be used only with
-			Jinny Corp. software products, under terms of user license.
-			Contact Jinny Corp. for any other use.
-			]"
-	source: "[
-			Jinny Corp.
-			3587 Oakcliff Road, Doraville, GA 30340
-			Telephone 770-734-9222, Fax 770-734-0556
-			Website http://www.jinny.com
-			Customer support http://support.jinny.com
+	copyright: "[
+			Eiffel Forum License, version 2
+
+			Permission is hereby granted to use, copy, modify and/or distribute
+			this package, provided that: copyright notices are retained unchanged,
+			any distribution of this package, whether modified or not, includes
+			this license text.  Permission is hereby also granted to distribute
+			binary programs which depend on this package. If the binary program
+			depends on a modified version of this package, you are encouraged to
+			publicly release the modified version of this package.
+			***********************
+
+			THIS PACKAGE IS PROVIDED "AS IS" AND WITHOUT WARRANTY. ANY EXPRESS OR
+			IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+			WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+			DISCLAIMED. IN NO EVENT SHALL THE AUTHORS BE LIABLE TO ANY PARTY FOR
+			ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+			DAMAGES ARISING IN ANY WAY OUT OF THE USE OF THIS PACKAGE.
+			***********************
 		]"
