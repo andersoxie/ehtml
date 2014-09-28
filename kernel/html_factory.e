@@ -16,6 +16,15 @@ note
 		EWF: Eiffel Web Framework
 		]"
 	EIS: "name=EWF", "src=http://eiffelwebframework.github.io/EWF/getting-started/", "protocol=URI"
+	design: "[
+		1. Go ahead and create the objects representing HTML_TABLE. Consider all "large" or "reusable" items
+			get built at objects and other (variable) bits are generated on-the-fly.
+		2. Within the HTML_OBJECT, consider a STRING feature for each part (e.g. tags, attributes, content, etc)
+			as these can be assembled around variable content as an append.
+		3. Consider a caching system where objects are cleaned and saved instead of being GC'd.
+		4. Carry the notion of HTML_TABLE to HTML_TABLE_FACTORY, which knows all of the various ways
+			to create an HTML_TABLE (either as an object or just as a STRING).
+		]"
 	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
@@ -24,7 +33,12 @@ class
 	HTML_FACTORY
 
 inherit
+	HTML_ELEMENT
+
 	HTML_GLOBAL_ATTRIBUTES
+		undefine
+			default_create
+		end
 
 feature -- Access
 
@@ -99,6 +113,124 @@ feature -- Access: <title> ... </title>
 			Result := tag_contented (title_tag_name, Void, a_content, no_global_attributes, has_end_tag, suppress_newlines)
 		ensure
 			valid_title: title_regex.matches (Result)
+		end
+
+feature -- Access: Tables
+
+	table_data (a_id: detachable STRING; a_content: STRING): STRING
+			-- <td> [a_content] </td>
+		note
+			BNFE: "[
+				Table_data ::=
+					"<" Tag [ID_attribute "=" Double_quote `a_id' Double_quote] ">" 
+					`a_content' 
+					"</" Tag ">"
+				]"
+		require
+			has_content: not a_content.is_empty
+		local
+			l_id: STRING
+		do
+			if attached a_id as al_id then
+				Result := tag_contented (table_data_tag_name, tag_attribute_quoted_value ("id", al_id), a_content, no_global_attributes, has_end_tag, suppress_newlines)
+			else
+				Result := tag_contented (table_data_tag_name, Void, a_content, no_global_attributes, has_end_tag, suppress_newlines)
+			end
+		end
+
+	content_tuple_anchor: detachable TUPLE [id: detachable STRING; content: STRING]
+			-- Type anchor of some `content' with an optional `id'. DO NOT CALL! Type anchor only!
+		note
+			purpose: "[
+				To provide a common type structure for HTML tag elements with some form of `content',
+				and an optional `id'
+				]"
+			example: "[
+				<Tag id="some_identifier_for_dom_access">[content]</Tag>
+				]"
+		require
+			do_not_call: False
+		attribute
+			Result := Void
+		end
+
+	content_content_tuple_anchor: detachable TUPLE [id: detachable STRING; contents: attached like content_tuple_anchor]
+			-- Type anchor of some repeating `contents' with an optional `id'. DO NOT CALL! Type anchor only!
+		note
+			purpose: "[
+				To provide a common type structure for HTML tag elements with some form of `contents',
+				and an optional `id', where `contents' are recursive `content_tuple_anchor' items.
+				]"
+			example: "[
+				<Tag id="some_identifier_for_dom_access">
+					[{<Tag2 id="some_identifier_for_dom_access">[content]</Tag2>}+]
+				</Tag>
+				]"
+		require
+			do_not_call: False
+		attribute
+			Result := Void
+		end
+
+	table_rows (a_contents: attached like content_content_tuple_anchor): STRING
+		do
+			create Result.make_empty
+		end
+
+
+	table_row (a_id: detachable STRING; a_contents: ARRAY [attached like content_tuple_anchor]): STRING
+			-- <tr> {<td>[a_contents].item</td>}+ </tr>
+		note
+			description: "[
+				An HTML <tr> with `a_contents' generated through `table_data'.
+				]"
+			BNFE: "[
+				Table_row ::=
+					Start_tag
+					Table_data_items
+					End_tag
+				
+				Start_tag ::=
+					"<" Tag [ID_attribute "=" Double_quote `a_id' Double_quote] ">"	
+				
+				Table_data_items ::=
+					{`table_data'}+
+					
+				End_tag ::=
+					"</" Tag ">"
+				]"
+		require
+			has_content: a_contents.count > 0
+		local
+			l_content: STRING
+		do
+			create l_content.make_empty
+			across a_contents as ic_contents loop
+				l_content.append_string (table_data (ic_contents.item.id, ic_contents.item.content))
+			end
+			if attached a_id as al_id then
+				Result := tag_contented (table_row_tag_name, tag_attribute_quoted_value ("id", al_id), l_content, no_global_attributes, has_end_tag, suppress_newlines)
+			else
+				Result := tag_contented (table_row_tag_name, Void, l_content, no_global_attributes, has_end_tag, suppress_newlines)
+			end
+		end
+
+	table_header (a_content: STRING): STRING
+			-- <th> [a_content] </th>
+		do
+			Result := tag_contented (table_header_tag_name, Void, a_content, no_global_attributes, has_end_tag, suppress_newlines)
+		end
+
+	table_body (a_content: STRING): STRING
+			-- <tbody> [a_content] </tbody>
+		do
+			Result := tag_contented (table_body_tag_name, Void, a_content, no_global_attributes, has_end_tag, suppress_newlines)
+		end
+
+	table (a_content: STRING): STRING
+			-- <table> [a_content] </table>
+		do
+			Result := tag_contented (table_tag_name, Void, a_content, no_global_attributes, has_end_tag, suppress_newlines)
 		end
 
 feature -- Access: <p> ... </p>
@@ -191,84 +323,6 @@ feature -- Basic Operations
 			end
 		ensure
 			has_tab_count: Result.occurrences (tab) >= a_tab_count
-		end
-
-feature {NONE} -- Implementation: Tag Primitives
-
-	frozen start_tag (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
-			-- Start tag based on `a_tag'.
-		local
-			l_result,
-			l_attributes: STRING
-		do
-			if attached a_attributes then
-				create l_result.make_empty
-				if attached a_manual_attributes and then not a_manual_attributes.is_empty then
-					l_result.append_character (space)
-					l_result.append_string (a_manual_attributes)
-				end
-				l_attributes := a_attributes.attributes_with_all_data.twin
-				if not l_attributes.is_empty then
-					l_result.append_string (l_attributes)
-				end
-				l_attributes := l_result
-			else
-				if attached a_manual_attributes then
-					create l_attributes.make_from_string (a_manual_attributes)
-					if l_attributes.count > 2 then
-						if not l_attributes [1].is_space then
-							l_attributes.prepend_character (space)
-						end
-						l_attributes.right_adjust
-					end
-				else
-					create l_attributes.make_empty
-				end
-			end
-			create Result.make (a_tag.count + 2 + l_attributes.count)
-			Result.append_character (left_angle)
-			Result.append_string (a_tag)
-			Result.append_string (l_attributes)
-			if a_is_self_ending then
-				Result.append_character (end_slash)
-			end
-			Result.append_character (right_angle)
-			if not a_suppress_newlines then
-				Result.append_character (newline)
-			end
-		end
-
-	frozen end_tag (a_tag: STRING): STRING
-			-- End tag based on `a_tag'.
-		do
-			create Result.make (a_tag.count + 3)
-			Result.append_character (left_angle)
-			Result.append_character (end_slash)
-			Result.append_string (a_tag)
-			Result.append_character (right_angle)
-		end
-
-feature {NONE} -- Implementation: Attribute Primitives
-
-	tag_attribute_quoted_value (a_key, a_value: STRING): STRING
-			-- Create an HTML <tag [a_key]="[a_value]" ...> attribute.
-		do
-			Result := tag_attribute (a_key, "%"" + a_value + "%"")
-		end
-
-	tag_attribute (a_key, a_value: STRING): STRING
-			-- Create an HTML <tag [a_key]=[a_value] ...> attribute.
-		do
-			Result := " "
-			Result.append_string (a_key)
-			Result.append_character ('=')
-			Result.append_string (a_value)
-			Result.append_character (' ')
-		ensure
-			has_key: Result.has_substring (a_key)
-			has_value: Result.has_substring (a_value)
-			has_equality: Result.has_substring ("=")
-			padded: Result [1].is_space and Result [Result.count].is_space
 		end
 
 note

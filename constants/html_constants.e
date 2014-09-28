@@ -148,6 +148,16 @@ feature -- Constants: Tag names
 
 	title_tag_name: STRING = "title"
 
+	table_tag_name: STRING = "table"
+
+	table_body_tag_name: STRING = "tbody"
+
+	table_header_tag_name: STRING = "th"
+
+	table_row_tag_name: STRING = "tr"
+
+	table_data_tag_name: STRING = "td"
+
 	op_parameter_keyword: STRING = "op"
 			-- Keyword for "op" (operation) parameter.
 
