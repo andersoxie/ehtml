@@ -9,85 +9,107 @@ note
 deferred class
 	HTML_ELEMENT
 
-feature {NONE} -- Implementation: Tag Primitives
+inherit
+	HTML_ELEMENT_HELPER
 
-	frozen start_tag (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
-			-- Start tag based on `a_tag'.
-		local
-			l_result,
-			l_attributes: STRING
-		do
-			create l_attributes.make (100)
-			if attached a_manual_attributes then
-				l_attributes.append_string (a_manual_attributes)
-			end
-			if attached a_attributes then
-				l_attributes.append_string (a_attributes.attributes_with_all_data)
-			end
-			if l_attributes.count > 2 then
-				l_attributes.left_adjust
-				l_attributes.right_adjust
-				l_attributes.prepend_character ({HTML_GLOBAL_ATTRIBUTES}.space)
-			end
-			create Result.make (a_tag.count + 2 + l_attributes.count)
-			Result.append_character ({HTML_GLOBAL_ATTRIBUTES}.left_angle)
-			Result.append_string (a_tag)
-			Result.append_string (l_attributes)
-			if a_is_self_ending then
-				Result.append_character ({HTML_GLOBAL_ATTRIBUTES}.end_slash)
-			end
-			Result.append_character ({HTML_GLOBAL_ATTRIBUTES}.right_angle)
-			if not a_suppress_newlines then
-				Result.append_character ({HTML_GLOBAL_ATTRIBUTES}.newline)
-			end
+feature -- Access
+
+	tag: STRING
+			-- HTML <tag> for Current.
+		deferred
 		end
 
-	frozen end_tag (a_tag: STRING): STRING
-			-- End tag based on `a_tag'.
+	html (a_parent: STRING)
+			-- HTML representation of Current, integrated into `a_parent'.
+		note
+			how: "[
+				By taking the `a_parent' string and appending first the <start>
+				tag with "attributes" (manual and otherwise) and then passing
+				that string downward to other subordinate contents. Finally, the
+				<end> tag of Current is appended and the resulting `a_parent'
+				STRING is passed back up to the Client caller.
+				]"
 		do
-			create Result.make (a_tag.count + 3)
-			Result.append_character ({HTML_GLOBAL_ATTRIBUTES}.left_angle)
-			Result.append_character ({HTML_GLOBAL_ATTRIBUTES}.end_slash)
-			Result.append_string (a_tag)
-			Result.append_character ({HTML_GLOBAL_ATTRIBUTES}.right_angle)
+			a_parent.append_string (start_tag (tag, manual_attributes, global_attributes, not {HTML_CONSTANTS}.is_self_ending, False))
+			content (a_parent)
+			a_parent.append_string (end_tag (tag))
 		end
 
-feature {NONE} -- Implementation: Attribute Primitives
-
-	tag_attribute_quoted_value (a_key, a_value: STRING): STRING
-			-- Create an HTML <tag [a_key]="[a_value]" ...> attribute.
-		require
-			has_key: not a_key.is_empty
-			has_value: not a_value.is_empty
-		local
-			l_value: STRING
+	content (a_parent: STRING)
+			-- HTML representation of the content of Current.
 		do
-			create l_value.make (2 + a_value.count)
-			l_value.append_character ('"')
-			l_value.append_string (a_value)
-			l_value.append_character ('"')
-			Result := tag_attribute (a_key, l_value)
+			across contents as ic_contents loop ic_contents.item.html (a_parent) end
+		end
+
+	contents: ARRAYED_LIST [HTML_ELEMENT]
+			-- A list of content items as HTML_ELEMENTs.
+		attribute
+			create Result.make (0)
+		end
+
+	global_attributes: detachable HTML_GLOBAL_ATTRIBUTES
+			-- Attributes that are found in every HTML-5 <tag> element.
+
+	manual_attributes: detachable STRING
+			-- The `attributes' of Current representated as STRING.
+		do
+			if attributes.count > 0 then
+				Result := " "
+				across attributes as ic_attributes loop
+					Result.append_string (ic_attributes.item.key)
+					Result.append_character ('=')
+					if ic_attributes.item.is_quoted then
+						Result.append_character ('"')
+					end
+					Result.append_string (ic_attributes.item.value)
+					if ic_attributes.item.is_quoted then
+						Result.append_character ('"')
+					end
+					Result.append_character (' ')
+				end
+				Result.remove_tail (1)
+			end
 		ensure
-			has_quotes: Result.occurrences ('"') >= 2
+			good_count: attached Result implies Result.occurrences ('=') = attributes.count -- always count on an equal sign for each attribute.
+			good_keys: attached Result implies across attributes as ic_attributes all Result.has_substring (ic_attributes.item.key) end
+			good_values: attached Result implies across attributes as ic_attributes all Result.has_substring (ic_attributes.item.value) end
 		end
 
-	tag_attribute (a_key, a_value: STRING): STRING
-			-- Create an HTML <tag [a_key]=[a_value] ... > attribute.
+	attributes: ARRAYED_LIST [attached like attribute_anchor]
+			-- Attributes of Current held as `key'/`value' pairs in either a quoted or non-quoted format.
+		note
+			description: "[
+				A list of key-value pair attributes (quote-formatted or not), where Current defaults to
+				having no attributes at all.
+				]"
+		attribute
+			create Result.make (0)
+		end
+
+feature -- Settings
+
+	add_content_item (a_item: HTML_ELEMENT)
+			-- Add `a_item' to the `contents' of Current.
 		do
-			create Result.make (3 + a_key.count + a_value.count)
-			Result.append_character ({HTML_GLOBAL_ATTRIBUTES}.space)
-			Result.append_string (a_key)
-			Result.append_character ('=')
-			Result.append_string (a_value)
-			Result.append_character ({HTML_GLOBAL_ATTRIBUTES}.space)
+			contents.force (a_item)
 		ensure
-			has_key: Result.has_substring (a_key)
-			has_value: Result.has_substring (a_value)
-			has_equality: Result.has_substring ("=")
-			padded: Result [1].is_space and Result [Result.count].is_space
+			added: contents.has (a_item)
 		end
 
-note
+	add_attribute (a_item: attached like attribute_anchor)
+			-- Add `a_item' attribute to `attributes'.
+		do
+			attributes.force (a_item)
+		ensure
+			added: attributes.has (a_item)
+		end
+
+feature {NONE} -- Implementation: Constants
+
+	attribute_anchor: detachable TUPLE [key, value: STRING; is_quoted: BOOLEAN]
+			-- Type anchor for attribute items.
+
+;note
 	copyright: "[
 			Eiffel Forum License, version 2
 
