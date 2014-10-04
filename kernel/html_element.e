@@ -30,13 +30,31 @@ feature -- Access
 				STRING is passed back up to the Client caller.
 				]"
 		do
-			a_parent.append_string (start_tag (tag, manual_attributes, global_attributes, not {HTML_CONSTANTS}.is_self_ending, False))
+			a_parent.append_string (start_tag (tag, manual_attributes, global_attributes, not {HTML_CONSTANTS}.is_self_ending, True))
 			content (a_parent)
 			a_parent.append_string (end_tag (tag))
 		end
 
+	text: STRING
+			-- Text content of Current.
+		note
+			purpose: "[
+				To provide `text' content for Current as-needed, otherwise this
+				feature returns an empty string by default, which (when appended)
+				yields no appreciable change in the content of Current in the
+				`html' stream (see above).
+				]"
+		attribute
+			create Result.make_empty
+		end
+
 	content (a_parent: STRING)
 			-- HTML representation of the content of Current.
+		note
+			how: "[
+				By appending the HTML contents of Current to `a_parent' by passing
+				`a_parent' into each `contents' item.
+				]"
 		do
 			across contents as ic_contents loop ic_contents.item.html (a_parent) end
 		end
@@ -102,6 +120,14 @@ feature -- Settings
 			attributes.force (a_item)
 		ensure
 			added: attributes.has (a_item)
+		end
+
+	set_text (a_text: like text)
+			-- Set `text' with `a_text'.
+		do
+			text := a_text.twin
+		ensure
+			text_set: text ~ a_text
 		end
 
 feature {NONE} -- Implementation: Constants

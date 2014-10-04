@@ -1,4 +1,4 @@
-note	
+note
 	description: "[
 				Test Handler to process /user/{user}/message/ requests
 			]"
@@ -89,7 +89,6 @@ feature -- Access
 			EIS: "name=getting_user_message", "protocol=URI", "src=file:///./tests/getting_user_message.png"
 		local
 			l_body: STRING_8
-			l_form,
 			l_textarea,
 			l_input,
 			l_content: STRING

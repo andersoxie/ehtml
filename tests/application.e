@@ -105,7 +105,6 @@ feature -- Execution
 		local
 			l_message: WSF_HTML_PAGE_RESPONSE
 			l_html_response: STRING_8
-			l_user_name: READABLE_STRING_32
 		do
 			create l_message.make
 			l_message.set_title ("EWF tutorial / Hello World!")

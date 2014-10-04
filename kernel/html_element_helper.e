@@ -19,7 +19,6 @@ feature {NONE} -- Implementation: Tag Primitives
 	frozen start_tag (a_tag: STRING; a_manual_attributes: detachable STRING; a_attributes: detachable HTML_GLOBAL_ATTRIBUTES; a_is_self_ending, a_suppress_newlines: BOOLEAN): STRING
 			-- Start tag based on `a_tag'.
 		local
-			l_result,
 			l_attributes: STRING
 		do
 			create l_attributes.make (100)

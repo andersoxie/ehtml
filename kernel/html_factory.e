@@ -47,7 +47,6 @@ feature -- Access
 		require
 			valid_lang_code: attached a_language_code implies language_codes.has (a_language_code)
 		local
-			l_doctype,
 			l_html: STRING
 		do
 			Result := "<!doctype "
@@ -128,8 +127,6 @@ feature -- Access: Tables
 				]"
 		require
 			has_content: not a_content.is_empty
-		local
-			l_id: STRING
 		do
 			if attached a_id as al_id then
 				Result := tag_contented (table_data_tag_name, tag_attribute_quoted_value ("id", al_id), a_content, no_global_attributes, has_end_tag, suppress_newlines)
