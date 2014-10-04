@@ -127,11 +127,25 @@ feature -- Test routines
 
 	test_test_table_version
 			-- Same as `text_w3schools_sample_table' test, but with a class instead of building by hand.
+		note
+			how: "[
+				By testing the results of the TEST_SAVINGS_TABLE class `html' output with the sample constant
+				and then saving that as a full-HTML version to the `docs\test_outputs' folder where it can be
+				examined in a browser.
+				]"
 		local
 			l_test_table: TEST_SAVINGS_TABLE
+			l_html: STRING
+			l_file: PLAIN_TEXT_FILE
 		do
 			create l_test_table.make_with_data (<<["January", "$100"], ["February", "$80"]>>, Void)
 			assert_strings_equal ("w3schools_table_sample", w3schools_table_sample, l_test_table.html)
+
+			create l_file.make_create_read_write (".\docs\test_outputs\sample_table.html")
+			l_html := w3schools_table_sample_full.twin
+			l_html.replace_substring_all ("<<TABLE_SNIPPET>>", l_test_table.html)
+			l_file.put_string (l_html)
+			l_file.close
 		end
 
 feature {NONE} -- Implementation: Constants
@@ -144,6 +158,8 @@ feature {NONE} -- Implementation: Constants
 	table_with_subelements: STRING = "<table><th></th><tbody><tr><td>text_to_render</td></tr></tbody></table>"
 
 	w3schools_table_sample: STRING = "<table><tr><th>Month</th><th>Savings</th></tr><tr><td>January</td><td>$100</td></tr><tr><td>February</td><td>$80</td></tr></table>"
+	w3schools_table_sample_full: STRING = "<!DOCTYPE html><html><head><style>table, th, td {border: 1px solid black} th {color: red} td {color: blue}</style></head><body><<TABLE_SNIPPET>></body></html>"
+		-- Both a <table> only version and a full HTML document version.
 
 note
 	copyright: "[
