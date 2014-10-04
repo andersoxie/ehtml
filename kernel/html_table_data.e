@@ -11,6 +11,10 @@ class
 inherit
 	HTML_ELEMENT
 
+create
+	default_create,
+	make_with_id
+
 feature -- Access
 
 	tag: STRING

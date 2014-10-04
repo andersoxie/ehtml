@@ -2,6 +2,18 @@ note
 	description: "[
 		Representation of a stream of HTML plain/raw text.
 		]"
+	cautions: "[
+		1. Object instances of this class are not (presently) allowed to
+			have `contents', but only `text' `content'. (see invariant).
+			This is because any HTML-injection in plain/raw text ought
+			to be handled by breaking the text stream up. For example:
+			
+			this is some <strong> text </strong> to display
+			
+			ought to be broken into three parts: (1) "this is some ",
+			(2) <strong> with "text" as HTML_TEXT, and (3) " to display"
+		]"
+	EIS: "name=strong_text", "src=http://www.w3schools.com/tags/tag_strong.asp", "protocol=URI", "tag=w3schools"
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -13,6 +25,20 @@ inherit
 		redefine
 			html,
 			content
+		end
+
+create
+	default_create,
+	make_with_text
+
+feature {NONE} -- Initialization
+
+	make_with_text (a_text: like text)
+			-- Initialize Current with `a_text' for `text'.
+		do
+			text := a_text.twin
+		ensure
+			text_set: text ~ a_text
 		end
 
 feature -- Access
@@ -43,6 +69,9 @@ feature -- Access
 		do
 			a_parent.append_string (text)
 		end
+
+invariant
+	no_contents: contents.count = 0
 
 note
 	copyright: "[

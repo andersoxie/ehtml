@@ -12,6 +12,14 @@ deferred class
 inherit
 	HTML_ELEMENT_HELPER
 
+feature {NONE} -- Initialization
+
+	make_with_id (a_id: STRING)
+			-- Initialize Current with optional ID attribute.
+		do
+			add_attribute (["id", a_id, True])
+		end
+
 feature -- Access
 
 	tag: STRING

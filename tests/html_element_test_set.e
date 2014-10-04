@@ -61,8 +61,7 @@ feature -- Test routines
 			create l_body
 			create l_row
 			create l_data
-			create l_text
-			l_text.set_text ("text_to_render")
+			create l_text.make_with_text ("text_to_render")
 			l_table.add_content_item (l_header)
 			l_table.add_content_item (l_body)
 			l_body.add_content_item (l_row)
@@ -73,6 +72,68 @@ feature -- Test routines
 			assert_strings_equal ("table_with_subelements", table_with_subelements, l_html)
 		end
 
+	text_w3schools_sample_table
+			-- Test of the W3 Schools <table> sample.
+		note
+			EIS: "name=table_sample", "src=http://www.w3schools.com/tags/tryit.asp?filename=tryhtml_table_test", "protocol=URI", "tag=w3schools"
+		local
+			l_table: HTML_TABLE
+			l_header: HTML_TABLE_HEADER
+			l_row: HTML_TABLE_ROW
+			l_data: HTML_TABLE_DATA
+			l_text: HTML_TEXT
+			l_html: STRING
+			l_test_table: TEST_SAVINGS_TABLE
+		do
+			create l_table
+			create l_row
+			create l_header
+			create l_text.make_with_text ("Month")
+			l_header.add_content_item (l_text)
+			l_row.add_content_item (l_header)
+			create l_text.make_with_text ("Savings")
+			create l_header
+			l_header.add_content_item (l_text)
+			l_row.add_content_item (l_header)
+			l_table.add_content_item (l_row)
+
+			create l_row
+			create l_data
+			create l_text.make_with_text ("January")
+			l_data.add_content_item (l_text)
+			l_row.add_content_item (l_data)
+			create l_data
+			create l_text.make_with_text ("$100")
+			l_data.add_content_item (l_text)
+			l_row.add_content_item (l_data)
+			l_table.add_content_item (l_row)
+
+			create l_row
+			create l_data
+			create l_text.make_with_text ("February")
+			l_data.add_content_item (l_text)
+			l_row.add_content_item (l_data)
+			create l_data
+			create l_text.make_with_text ("$80")
+			l_data.add_content_item (l_text)
+			l_row.add_content_item (l_data)
+			l_table.add_content_item (l_row)
+
+			l_html := ""
+			l_table.html (l_html)
+			assert_strings_equal ("w3schools_table_sample", w3schools_table_sample, l_html)
+
+		end
+
+	test_test_table_version
+			-- Same as `text_w3schools_sample_table' test, but with a class instead of building by hand.
+		local
+			l_test_table: TEST_SAVINGS_TABLE
+		do
+			create l_test_table.make_with_data (<<["January", "$100"], ["February", "$80"]>>, Void)
+			assert_strings_equal ("w3schools_table_sample", w3schools_table_sample, l_test_table.html)
+		end
+
 feature {NONE} -- Implementation: Constants
 
 	empty_table: STRING = "<table></table>"
@@ -81,6 +142,8 @@ feature {NONE} -- Implementation: Constants
 	table_with_body: STRING = "<table><tbody></tbody></table>"
 
 	table_with_subelements: STRING = "<table><th></th><tbody><tr><td>text_to_render</td></tr></tbody></table>"
+
+	w3schools_table_sample: STRING = "<table><tr><th>Month</th><th>Savings</th></tr><tr><td>January</td><td>$100</td></tr><tr><td>February</td><td>$80</td></tr></table>"
 
 note
 	copyright: "[
