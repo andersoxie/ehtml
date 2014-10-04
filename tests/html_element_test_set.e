@@ -146,6 +146,15 @@ feature -- Test routines
 			l_html.replace_substring_all ("<<TABLE_SNIPPET>>", l_test_table.html)
 			l_file.put_string (l_html)
 			l_file.close
+
+			create l_test_table.make_with_data (<<["January", "$100"], ["February", "$80"], ["March", "$80"], ["April", "$99"], ["May", "$75"], ["June", "$150"], ["July", "$50"], ["August", "$90"], ["September", "$130"], ["October", "$120"], ["November", "$100"], ["December", "$80"]>>, Void)
+			create l_file.make_create_read_write (".\docs\test_outputs\sample_table_year.html")
+			l_html := w3schools_table_sample_full.twin
+			l_html.replace_substring_all ("<<TABLE_SNIPPET>>", l_test_table.html)
+			l_file.put_string (l_html)
+			l_file.close
+
+
 		end
 
 feature {NONE} -- Implementation: Constants

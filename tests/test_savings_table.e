@@ -15,6 +15,9 @@ feature {NONE} -- Initialize
 
 	make_with_data (a_data: ARRAY [TUPLE [month_name, savings_amount: STRING]]; a_id: detachable STRING)
 			-- Initialize Current with list of month names and savings amounts in `a_data' TUPLE and an optional `a_id'.
+		require
+			has_data: across a_data as ic_data all (not ic_data.item.month_name.is_empty) and (not ic_data.item.savings_amount.is_empty) end
+			has_id: attached a_id as al_id implies not al_id.is_empty
 		local
 			l_header: HTML_TABLE_HEADER
 			l_row: HTML_TABLE_ROW
@@ -40,6 +43,7 @@ feature {NONE} -- Initialize
 			l_row.add_content_item (l_header)
 			table.add_content_item (l_row)
 
+				-- Create each table row with data
 			across a_data as ic_data loop
 				create l_row
 				create l_data
@@ -52,6 +56,11 @@ feature {NONE} -- Initialize
 				l_row.add_content_item (l_data)
 				table.add_content_item (l_row)
 			end
+		ensure
+			valid_row_count: across a_data as ic_data all
+									html.has_substring (ic_data.item.savings_amount) and
+									html.has_substring (ic_data.item.month_name)
+								end
 		end
 
 feature -- Access
