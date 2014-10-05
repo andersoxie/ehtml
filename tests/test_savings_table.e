@@ -8,6 +8,9 @@ note
 class
 	TEST_SAVINGS_TABLE
 
+inherit
+	HTML_TABLE
+
 create
 	make_with_data
 
@@ -18,68 +21,61 @@ feature {NONE} -- Initialize
 		require
 			has_data: across a_data as ic_data all (not ic_data.item.month_name.is_empty) and (not ic_data.item.savings_amount.is_empty) end
 			has_id: attached a_id as al_id implies not al_id.is_empty
-		local
-			l_header: HTML_TABLE_HEADER
-			l_row: HTML_TABLE_ROW
-			l_data: HTML_TABLE_DATA
-			l_text: HTML_TEXT
 		do
 			if attached a_id as al_id and then not al_id.is_empty then
-				create table.make_with_id (al_id)
-			else
-				create table
+				make_with_id (al_id)
 			end
-			check has_table: attached table end
 
-				-- Set up standard headers
-			create l_row
-			create l_header
-			create l_text.make_with_text (month_header_text)
-			l_header.add_content_item (l_text)
-			l_row.add_content_item (l_header)
-			create l_text.make_with_text (savings_header_text)
-			create l_header
-			l_header.add_content_item (l_text)
-			l_row.add_content_item (l_header)
-			table.add_content_item (l_row)
-
-				-- Create each table row with data
+				-- Create table, adding header and a row for each `a_data' item.
+			add_content_item (header_row)
 			across a_data as ic_data loop
-				create l_row
-				create l_data
-				create l_text.make_with_text (ic_data.item.month_name)
-				l_data.add_content_item (l_text)
-				l_row.add_content_item (l_data)
-				create l_data
-				create l_text.make_with_text (ic_data.item.savings_amount)
-				l_data.add_content_item (l_text)
-				l_row.add_content_item (l_data)
-				table.add_content_item (l_row)
+				add_content_item (row (ic_data.item))
 			end
-		ensure
-			valid_row_count: across a_data as ic_data all
-									html.has_substring (ic_data.item.savings_amount) and
-									html.has_substring (ic_data.item.month_name)
-								end
-		end
-
-feature -- Access
-
-	html: STRING
-			-- HTML contents of Current.
-		do
-			create Result.make_empty
-			table.html (Result)
 		end
 
 feature {NONE} -- Implementation
 
-	table: HTML_TABLE
-			-- Internal storage for wrapped <table>
+	header_row: HTML_TABLE_ROW
+			-- Header of Current.
+		local
+			l_header: HTML_TABLE_HEADER
+			l_text: HTML_TEXT
+		once
+				-- Set up standard headers
+			create Result
+			create l_header
+			create l_text.make_with_text (month_header_text)
+			l_header.add_content_item (l_text)
+			Result.add_content_item (l_header)
+			create l_text.make_with_text (savings_header_text)
+			create l_header
+			l_header.add_content_item (l_text)
+			Result.add_content_item (l_header)
+		end
 
 	month_header_text: STRING = "Month"
 
 	savings_header_text: STRING = "Savings"
+
+	row (a_row_data: attached like internal_data_tuple_anchor): HTML_TABLE_ROW
+			-- <tr> for Current.
+		local
+			l_data: HTML_TABLE_DATA
+			l_text: HTML_TEXT
+		do
+				create Result
+				create l_data
+				create l_text.make_with_text (a_row_data.month_name)
+				l_data.add_content_item (l_text)
+				Result.add_content_item (l_data)
+				create l_data
+				create l_text.make_with_text (a_row_data.savings_amount)
+				l_data.add_content_item (l_text)
+				Result.add_content_item (l_data)
+		end
+
+	internal_data_tuple_anchor: detachable TUPLE [month_name, savings_amount: STRING]
+			-- Type anchor for data row.
 
 ;note
 	copyright: "[

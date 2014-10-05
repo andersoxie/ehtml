@@ -2,6 +2,7 @@ note
 	description: "[
 		Representation of a <tr> Table Row HTML element.
 		]"
+	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
 

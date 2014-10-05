@@ -2,6 +2,7 @@ note
 	description: "[
 		Representation of a <th> Table Header HTML element.
 		]"
+	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
 

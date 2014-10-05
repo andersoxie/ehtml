@@ -1,13 +1,13 @@
 note
 	description: "[
-		Representation of a <td> Table Data HTML element.
+		Representation of an HTML <body> element.
 		]"
 	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
 
 class
-	HTML_TABLE_DATA
+	HTML_BODY
 
 inherit
 	HTML_ELEMENT
@@ -21,7 +21,7 @@ feature -- Access
 	tag: STRING
 			-- <td> tag of Current.
 		once
-			Result := {HTML_CONSTANTS}.table_data_tag_name
+			Result := {HTML_CONSTANTS}.body_tag_name
 		end
 
 note

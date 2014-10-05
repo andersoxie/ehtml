@@ -23,7 +23,7 @@ feature -- Test routines
 		do
 			create l_table
 			l_html := ""
-			l_table.html (l_html)
+			l_table.append_html (l_html)
 			assert_strings_equal ("empty_table", empty_table, l_html)
 		end
 
@@ -36,12 +36,12 @@ feature -- Test routines
 		do
 			create l_table
 			l_html := ""
-			l_table.html (l_html)
+			l_table.append_html (l_html)
 			assert_strings_equal ("empty_table", empty_table, l_html)
 			create l_body
 			l_table.add_content_item (l_body)
 			l_html := ""
-			l_table.html (l_html)
+			l_table.append_html (l_html)
 			assert_strings_equal ("table_with_body", table_with_body, l_html)
 		end
 
@@ -68,7 +68,7 @@ feature -- Test routines
 			l_row.add_content_item (l_data)
 			l_data.add_content_item (l_text)
 			l_html := ""
-			l_table.html (l_html)
+			l_table.append_html (l_html)
 			assert_strings_equal ("table_with_subelements", table_with_subelements, l_html)
 		end
 
@@ -83,7 +83,6 @@ feature -- Test routines
 			l_data: HTML_TABLE_DATA
 			l_text: HTML_TEXT
 			l_html: STRING
-			l_test_table: TEST_SAVINGS_TABLE
 		do
 			create l_table
 			create l_row
@@ -120,7 +119,7 @@ feature -- Test routines
 			l_table.add_content_item (l_row)
 
 			l_html := ""
-			l_table.html (l_html)
+			l_table.append_html (l_html)
 			assert_strings_equal ("w3schools_table_sample", w3schools_table_sample, l_html)
 
 		end
@@ -129,32 +128,41 @@ feature -- Test routines
 			-- Same as `text_w3schools_sample_table' test, but with a class instead of building by hand.
 		note
 			how: "[
-				By testing the results of the TEST_SAVINGS_TABLE class `html' output with the sample constant
+				By testing the results of the TEST_SAVINGS_TABLE class `append_html' output with the sample constant
 				and then saving that as a full-HTML version to the `docs\test_outputs' folder where it can be
 				examined in a browser.
 				]"
 		local
 			l_test_table: TEST_SAVINGS_TABLE
-			l_html: STRING
+			l_page: HTML_PAGE
+			l_body: HTML_BODY
+			l_html, l_final: STRING
 			l_file: PLAIN_TEXT_FILE
 		do
+				-- Sample for in-memory testing
 			create l_test_table.make_with_data (<<["January", "$100"], ["February", "$80"]>>, Void)
-			assert_strings_equal ("w3schools_table_sample", w3schools_table_sample, l_test_table.html)
+			create l_html.make_empty
+			l_test_table.append_html (l_html)
+			assert_strings_equal ("w3schools_table_sample", w3schools_table_sample, l_html)
 
+				-- Sample output to docs\test_output
 			create l_file.make_create_read_write (".\docs\test_outputs\sample_table.html")
-			l_html := w3schools_table_sample_full.twin
-			l_html.replace_substring_all ("<<TABLE_SNIPPET>>", l_test_table.html)
-			l_file.put_string (l_html)
+			l_final := w3schools_table_sample_full.twin
+			l_final.replace_substring_all ("<<TABLE_SNIPPET>>", l_html)
+			l_file.put_string (l_final)
 			l_file.close
 
+				-- Sample with 12 months
 			create l_test_table.make_with_data (<<["January", "$100"], ["February", "$80"], ["March", "$80"], ["April", "$99"], ["May", "$75"], ["June", "$150"], ["July", "$50"], ["August", "$90"], ["September", "$130"], ["October", "$120"], ["November", "$100"], ["December", "$80"]>>, Void)
 			create l_file.make_create_read_write (".\docs\test_outputs\sample_table_year.html")
-			l_html := w3schools_table_sample_full.twin
-			l_html.replace_substring_all ("<<TABLE_SNIPPET>>", l_test_table.html)
-			l_file.put_string (l_html)
+			create l_page
+			create l_body
+			l_body.add_content_item (l_test_table)
+			l_page.add_content_item (l_body)
+			create l_final.make_empty
+			l_page.append_html (l_final)
+			l_file.put_string (l_final)
 			l_file.close
-
-
 		end
 
 feature {NONE} -- Implementation: Constants

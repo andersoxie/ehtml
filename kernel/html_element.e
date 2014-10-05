@@ -27,11 +27,11 @@ feature -- Access
 		deferred
 		end
 
-	html (a_parent: STRING)
-			-- HTML representation of Current, integrated into `a_parent'.
+	append_html (a_parent: STRING)
+			-- Append HTML of Current to `a_parent' HTML.
 		note
 			how: "[
-				By taking the `a_parent' string and appending first the <start>
+				By taking the `a_parent' HTML and appending first the <start>
 				tag with "attributes" (manual and otherwise) and then passing
 				that string downward to other subordinate contents. Finally, the
 				<end> tag of Current is appended and the resulting `a_parent'
@@ -50,7 +50,7 @@ feature -- Access
 				To provide `text' content for Current as-needed, otherwise this
 				feature returns an empty string by default, which (when appended)
 				yields no appreciable change in the content of Current in the
-				`html' stream (see above).
+				`append_html' stream (see above).
 				]"
 		attribute
 			create Result.make_empty
@@ -64,7 +64,7 @@ feature -- Access
 				`a_parent' into each `contents' item.
 				]"
 		do
-			across contents as ic_contents loop ic_contents.item.html (a_parent) end
+			across contents as ic_contents loop ic_contents.item.append_html (a_parent) end
 		end
 
 	contents: ARRAYED_LIST [HTML_ELEMENT]

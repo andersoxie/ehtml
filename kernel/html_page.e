@@ -1,16 +1,19 @@
 note
 	description: "[
-		Representation of a <td> Table Data HTML element.
+		Representation of an HTML <html> page element.
 		]"
 	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
 
 class
-	HTML_TABLE_DATA
+	HTML_PAGE
 
 inherit
 	HTML_ELEMENT
+		redefine
+			append_html
+		end
 
 create
 	default_create,
@@ -21,7 +24,14 @@ feature -- Access
 	tag: STRING
 			-- <td> tag of Current.
 		once
-			Result := {HTML_CONSTANTS}.table_data_tag_name
+			Result := {HTML_CONSTANTS}.html_tag_name
+		end
+
+	append_html (a_parent: STRING)
+			-- <Precursor>
+		do
+			a_parent.append_string ("<!DOCTYPE html>")
+			Precursor (a_parent)
 		end
 
 note

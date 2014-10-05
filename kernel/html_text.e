@@ -14,6 +14,7 @@ note
 			(2) <strong> with "text" as HTML_TEXT, and (3) " to display"
 		]"
 	EIS: "name=strong_text", "src=http://www.w3schools.com/tags/tag_strong.asp", "protocol=URI", "tag=w3schools"
+	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -23,7 +24,7 @@ class
 inherit
 	HTML_ELEMENT
 		redefine
-			html,
+			append_html,
 			content
 		end
 
@@ -49,7 +50,7 @@ feature -- Access
 			create Result.make_empty
 		end
 
-	html (a_parent: STRING)
+	append_html (a_parent: STRING)
 			-- <Precursor>
 		note
 			how: "[

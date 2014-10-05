@@ -2,6 +2,7 @@ note
 	description: "[
 		Representation of an HTML <tbody> element.
 		]"
+	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
 
