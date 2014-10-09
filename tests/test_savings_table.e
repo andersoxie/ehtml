@@ -22,8 +22,8 @@ feature {NONE} -- Initialize
 			has_data: across a_data as ic_data all (not ic_data.item.month_name.is_empty) and (not ic_data.item.savings_amount.is_empty) end
 			has_id: attached a_id as al_id implies not al_id.is_empty
 		do
-			if attached a_id as al_id and then not al_id.is_empty then
-				make_with_id (al_id)
+			if attached a_id and then not a_id.is_empty then
+				make_with_id (a_id)
 			end
 
 				-- Create table, adding header and a row for each `a_data' item.

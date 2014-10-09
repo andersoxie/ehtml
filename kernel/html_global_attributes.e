@@ -93,8 +93,8 @@ feature -- Access
 		do
 			Result := attributes.twin
 			Result.append_character (space_8)
-			if attached a_data_attribute_key as al_key then
-				Result.append_string (data_attribute_for_key (al_key))
+			if attached a_data_attribute_key then
+				Result.append_string (data_attribute_for_key (a_data_attribute_key))
 			end
 		end
 

@@ -128,8 +128,8 @@ feature -- Access: Tables
 		require
 			has_content: not a_content.is_empty
 		do
-			if attached a_id as al_id then
-				Result := tag_contented (table_data_tag_name, tag_attribute_quoted_value ("id", al_id), a_content, no_global_attributes, has_end_tag, suppress_newlines)
+			if attached a_id then
+				Result := tag_contented (table_data_tag_name, tag_attribute_quoted_value ("id", a_id), a_content, no_global_attributes, has_end_tag, suppress_newlines)
 			else
 				Result := tag_contented (table_data_tag_name, Void, a_content, no_global_attributes, has_end_tag, suppress_newlines)
 			end
@@ -205,8 +205,8 @@ feature -- Access: Tables
 			across a_contents as ic_contents loop
 				l_content.append_string (table_data (ic_contents.item.id, ic_contents.item.content))
 			end
-			if attached a_id as al_id then
-				Result := tag_contented (table_row_tag_name, tag_attribute_quoted_value ("id", al_id), l_content, no_global_attributes, has_end_tag, suppress_newlines)
+			if attached a_id then
+				Result := tag_contented (table_row_tag_name, tag_attribute_quoted_value ("id", a_id), l_content, no_global_attributes, has_end_tag, suppress_newlines)
 			else
 				Result := tag_contented (table_row_tag_name, Void, l_content, no_global_attributes, has_end_tag, suppress_newlines)
 			end

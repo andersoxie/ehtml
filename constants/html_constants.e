@@ -130,24 +130,54 @@ feature {HTML_FACTORY} -- Implementation: Regex
 
 feature -- Constants: Tag names
 
-	get_method_name: STRING = "GET"
-
-	post_method_name: STRING = "POST"
-
-	html_tag_name: STRING = "html"
-
+		-- A
+		-- B
 	body_tag_name: STRING = "body"
 
+	button_tag_name: STRING = "button"
+
+		-- C
+		-- D
+		-- E
+		-- F
 	form_tag_name: STRING = "form"
 
-	input_tag_name: STRING = "input"
+	fieldset_tag_name: STRING = "fieldset"
 
-	paragraph_tag_name: STRING = "p"
+		-- G
+	get_method_name: STRING = "GET"
+
+		-- H
+	html_tag_name: STRING = "html"
 
 	head_tag_name: STRING = "head"
 
-	title_tag_name: STRING = "title"
+		-- I
+	input_tag_name: STRING = "input"
 
+		-- J
+		-- K
+		-- L
+	label_tag_name: STRING = "lablel"
+
+		-- M
+		-- N
+		-- O
+	op_parameter_keyword: STRING = "op"
+			-- Keyword for "op" (operation) parameter.
+
+		-- P
+	post_method_name: STRING = "POST"
+
+	paragraph_tag_name: STRING = "p"
+
+		-- Q
+	quit_operation_keyword: STRING = "quit"
+			-- Keyword for "quit" parameter.
+
+		-- R
+		-- S
+		-- T
 	table_tag_name: STRING = "table"
 
 	table_body_tag_name: STRING = "tbody"
@@ -158,11 +188,14 @@ feature -- Constants: Tag names
 
 	table_data_tag_name: STRING = "td"
 
-	op_parameter_keyword: STRING = "op"
-			-- Keyword for "op" (operation) parameter.
+	title_tag_name: STRING = "title"
 
-	quit_operation_keyword: STRING = "quit"
-			-- Keyword for "quit" parameter.
+		-- U
+		-- V
+		-- W
+		-- X
+		-- Y
+		-- Z
 
 feature -- Codes
 

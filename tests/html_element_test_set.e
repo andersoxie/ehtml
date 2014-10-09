@@ -31,15 +31,13 @@ feature -- Test routines
 			-- Test for <table><tbody></tbody></table>.
 		local
 			l_table: HTML_TABLE
-			l_body: HTML_TABLE_BODY
 			l_html: STRING
 		do
 			create l_table
 			l_html := ""
 			l_table.append_html (l_html)
 			assert_strings_equal ("empty_table", empty_table, l_html)
-			create l_body
-			l_table.add_content_item (l_body)
+			l_table.add_content_item (create {HTML_TABLE_BODY})
 			l_html := ""
 			l_table.append_html (l_html)
 			assert_strings_equal ("table_with_body", table_with_body, l_html)
