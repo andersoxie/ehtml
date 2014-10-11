@@ -1,4 +1,4 @@
-note	
+note
 	description: "[
 		Representation of a Test Hello Home Page
 		]"
@@ -37,36 +37,10 @@ feature -- Access
 		local
 			l_content: STRING
 		do
-			l_content := factory.indent_one_level_and_then_newline (head.twin)
-			l_content.append_string (factory.indent_one_level_and_then_newline (body.twin))
-			Result := factory.html_page (l_content, "en", "html PUBLIC %"-//W3C//DTD XHTML 1.0 Strict//EN%" %"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd%"")
+			Result := factory.indent_one_level_and_then_newline (body.twin)
 		end
-
-feature -- Access: Hand-coded HTML
-
-	hand_coded_html: STRING = "[
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-	<html xmlns="http://www.w3.org/1999/xhtml">
-		<<HEAD>>
-		<<BODY>>
-	</html>
-]"
 
 feature {NONE} -- Implementation
-
-	head: STRING
-			-- Head Current: <head> ... title ... </head>
-		do
-			Result := factory.head (title)
-		end
-
-	title: STRING
-			-- Title Current.
-		do
-			Result := factory.title ("EWF tutorial / Hello World!")
-		ensure
-			right_content: Result.same_string ("<title>EWF tutorial / Hello World!</title>")
-		end
 
 	body: STRING
 			-- Body of Current

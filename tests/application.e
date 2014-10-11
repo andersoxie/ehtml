@@ -29,7 +29,7 @@ note
 	BNF: "[
 		Application ::=
 			Main_application [1]
-			HTML_pages [2]
+			Responses [2]
 			
 		Main_application ::=
 			Wsf_routed_service [3]
@@ -39,7 +39,7 @@ note
 		(*
 		[1] Main_application: In this demo/example, the main application brings together
 				facilities of routing and connections to the default service (e.g. Nino HTTPD).
-		[2] HTML_pages: Pages served consist of either hand-coded or generated HTML. The
+		[2] Responses: Pages served consist of either hand-coded or generated HTML. The
 				generated content is facilitated by the features of the HTML_FACTORY in
 				eHTML library.
 		[3] Wsf_routed_service: Provides the setup and service of request-to-response routing.
@@ -67,10 +67,24 @@ inherit
 create
 	make_and_launch
 
+feature {NONE} -- Documentation
+
+	documentation: detachable DOC_LIBRARY_EHTML
+			-- Primary documentation starting point for library.
+
 feature {NONE} -- Initialization
 
 	setup_router
-			-- See `setup_router' class-feature notes (below).
+			-- <Precursor>
+		note
+			purpose: "[
+				To direct routing of incoming browser requests to the appropriate handler routine.
+				]"
+			how: "[
+				By mapping various requests based on a "template" to the appropriate handler. For example:
+					"users/{user}/message/.." templates are routed to the TEST_USER_MESSAGE_HANDLER with
+					an expected "method". The "map_*" is responsible for setting up the precise mapping.
+				]"
 		do
 			map_agent_uri ("/hello", agent execute_hello, Void)
 			map_uri_template ("/users/{user}/message/{mesgid}", create {TEST_USER_MESSAGE_HANDLER}, router.methods_HEAD_GET_POST)
@@ -79,18 +93,21 @@ feature {NONE} -- Initialization
 		end
 
 	initialize
-			-- See `initialize' class-feature notes (below).
+			-- <Precursor>
 		do
 			create {WSF_SERVICE_LAUNCHER_OPTIONS_FROM_INI} service_options.make_from_file (configuration_file)
 			Precursor
 			initialize_router
 		end
 
-feature -- Execution
+feature -- Responses
 
 	execute_hello (a_request: WSF_REQUEST; a_response: WSF_RESPONSE)
 			-- See `execute_hello' class-feature notes (below).
 		note
+			purpose: "[
+				To handle `a_request' (if appropriate) and generate `a_response' as needed.
+				]"
 			delete_me: "[
 				NOTE: Delete this code when the GH class is done!
 				
@@ -104,20 +121,18 @@ feature -- Execution
 				]"
 		local
 			l_message: WSF_HTML_PAGE_RESPONSE
-			l_html_response: STRING_8
+			l_html_body: STRING_8
 		do
 			create l_message.make
 			l_message.set_title ("EWF tutorial / Hello World!")
 			if attached {WSF_STRING} a_request.item (user_parameter_keyword) as al_user then
-				l_html_response := (create {TEST_HELLO_WORLD_RESPONSE_PAGE}).html (al_user)
+				l_html_body := (create {TEST_HELLO_WORLD_KNOWN_USER_PAGE}).html (al_user)
 			else
-				l_html_response := (create {TEST_HELLO_HOME_PAGE}).html
+				l_html_body := (create {TEST_HELLO_HOME_PAGE}).html
 			end
-			l_message.set_body (l_html_response)
+			l_message.set_body (l_html_body)
 			a_response.send (l_message)
 		end
-
-feature -- Response: User
 
 	response_user (a_request: WSF_REQUEST): WSF_RESPONSE_MESSAGE
 			-- Computed response message.
@@ -181,7 +196,7 @@ feature -- Helper: mapping
 		end
 
 	map_uri_template (a_uri_template: READABLE_STRING_8; a_handler: WSF_URI_TEMPLATE_HANDLER; a_request_methods: detachable WSF_REQUEST_METHODS)
-			-- Map URI requests with `a_uri_template' mask to `a_handler'
+			-- Map URI requests with `a_uri_template' mask to `a_handler'.
 		do
 			router.map_with_request_methods (create {WSF_URI_TEMPLATE_MAPPING}.make (a_uri_template, a_handler), a_request_methods)
 		end

@@ -86,7 +86,7 @@ feature -- Access
 	user_message_get (a_user: READABLE_STRING_32; a_request: WSF_REQUEST): WSF_HTML_PAGE_RESPONSE
 			-- Respond with a "Get-message" form.
 		note
-			EIS: "name=getting_user_message", "protocol=URI", "src=file:///./tests/getting_user_message.png"
+			EIS: "name=getting_user_message", "src=.\tests\getting_user_message.pdf", "protocol=PDF"
 		local
 			l_body: STRING_8
 			l_textarea,
