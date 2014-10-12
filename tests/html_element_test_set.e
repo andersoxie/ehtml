@@ -144,7 +144,7 @@ feature -- Test routines
 			assert_strings_equal ("w3schools_table_sample", w3schools_table_sample, l_html)
 
 				-- Sample output to docs\test_output
-			create l_file.make_create_read_write (".\docs\test_outputs\sample_table.html")
+			create l_file.make_create_read_write (".\documentation\test_outputs\sample_table.html")
 			l_final := w3schools_table_sample_full.twin
 			l_final.replace_substring_all ("<<TABLE_SNIPPET>>", l_html)
 			l_file.put_string (l_final)
@@ -152,7 +152,7 @@ feature -- Test routines
 
 				-- Sample with 12 months
 			create l_test_table.make_with_data (<<["January", "$100"], ["February", "$80"], ["March", "$80"], ["April", "$99"], ["May", "$75"], ["June", "$150"], ["July", "$50"], ["August", "$90"], ["September", "$130"], ["October", "$120"], ["November", "$100"], ["December", "$80"]>>, Void)
-			create l_file.make_create_read_write (".\docs\test_outputs\sample_table_year.html")
+			create l_file.make_create_read_write (".\documentation\test_outputs\sample_table_year.html")
 			create l_page
 			create l_body
 			l_body.add_content_item (l_test_table)

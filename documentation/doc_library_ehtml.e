@@ -56,6 +56,9 @@ feature -- Documentation
 			Result := Void
 		end
 
+	css_cluster_documentation: detachable DOC_CSS
+			-- Documentation of the CSS cluster.
+
 ;note
 	copyright: "[
 			Eiffel Forum License, version 2

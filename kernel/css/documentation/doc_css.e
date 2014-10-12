@@ -1,6 +1,6 @@
 ﻿note
 	description: "[
-		Documentating for CSS Cluster
+		Documentation for the CSS Cluster
 		]"
 	purpose: "[
 		To facilitate your learning of the CSS cluster.
@@ -21,7 +21,7 @@
 				on a page like this: (all <p> elements will be center-aligned, with a red text color)
 				
 				┌───────────────────────────────────────────┐
-				│	p { text-align: center; color: red; }	│
+					p { text-align: center; color: red; }	
 				└───────────────────────────────────────────┘
 				
 		(2) The id selector uses the id attribute of an HTML tag to find the specific element. An id 
@@ -31,7 +31,7 @@
 				with id="para1":
 				
 				┌───────────────────────────────────────────────┐
-				│	#para1 { text-align: center; color: red; }	│
+					#para1 { text-align: center; color: red; }	
 				└───────────────────────────────────────────────┘
 				
 		(3) The class selector finds elements with the specific class. The class selector uses the HTML 
@@ -40,31 +40,31 @@
 				be center-aligned:
 
 				┌───────────────────────────────────────────────┐
-				│	.center { text-align: center; color: red; }	│
+					.center { text-align: center; color: red; }	
 				└───────────────────────────────────────────────┘
 
 			You can also specify that only specific HTML elements should be affected by a class. In the example
 				below, all p elements with class="center" will be center-aligned:
 
 				┌───────────────────────────────────────────────────┐
-				│	p.center { text-align: center; color: red; }	│
+					p.center { text-align: center; color: red; }	
 				└───────────────────────────────────────────────────┘
 
 		(4) In style sheets there are often elements with the same style:
 
 				┌───────────────────────────────────────────────────┐
-				│	h1 { text-align: center; color: red; }			│
-				│													│
-				│	h2 { text-align: center; color: red; }			│
-				│													│
-				│	p { text-align: center; color: red; }			│
+					h1 { text-align: center; color: red; }			
+																	
+					h2 { text-align: center; color: red; }			
+																	
+					p { text-align: center; color: red; }			
 				└───────────────────────────────────────────────────┘
 
 			To minimize the code, you can group selectors. To group selectors, separate each selector
 			with a comma. In the example below we have grouped the selectors from the code above:
 
 				┌───────────────────────────────────────────────────┐
-				│	h1, h2, p { text-align: center; color: red; }	│
+					h1, h2, p { text-align: center; color: red; }	
 				└───────────────────────────────────────────────────┘
 			
 		Declaration ::=
@@ -79,9 +79,9 @@
 		(1) Example of a multi-line comment:
 		
 				┌───────────────────────────────────────────────────┐
-				│	/* This is										│
-				│	a multi-line									│
-				│	comment */										│
+					/* This is										
+					a multi-line									
+					comment */										
 				└───────────────────────────────────────────────────┘
 		]"
 	EIS: "name=css_syntax", "src=http://www.w3schools.com/css/css_syntax.asp", "protocol=URI", "tag=external"
@@ -115,14 +115,44 @@
 		height, width						Specifies the height and width of an element. Important for floated elements.
 		clear								Force this floated element to position: left, right, and both
 		]"
+	design: "[
+		Overview
+		========
+		
+		First, CSS classes are designed to work with a Preprocessor, where they are consolidated into a collection
+		and then Compiled--that is--the smallest page-level <style> .. </style> is created from the collection.
+		This relieves you from having to coordinate style rules on your own in either separate CSS style sheet
+		files or anywhere else. The Proprocessor and Compiler will gather the rules you provide to HTML elements
+		and through "Themes", consilodating then and compiling them into the smallest representation possible.
+		This minimizes the amount of code sent to the client browser and ensures there is no over-specification,
+		under-specification, or mis-specification of CSS. Only the CSS styles rules needed are included in the
+		final page response submitted to the client browser.
+		
+		The grouping of Declarations is performed by the Preprocessor and Compiler. There is no need to hand-code
+		grouped Declarations. Therefore, the CSS_DECLARATION class provides the common means of creating a
+		Declaration and giving it to either an HTML_ELEMENT or to a CSS_THEME, which is applied against some
+		collection of HTML_ELEMENT objects.
+		
+		┌───────────────────────────────────────────────────────────────────────────────────────────────────────┐
+			CSS_DECLARATION: Provides features capturing basic CSS styles and functions against them.
+				(descendant classes like: CSS_MARGIN, etc.)			
+			CSS_THEME: A collection of CSS_DECLARATION objects applied to collections of HTML_ELEMENT objects.	
+		└───────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+		]"
 	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
 
-class
+deferred class
 	DOC_CSS
 
-note
+feature -- Documentation
+
+	back_to_top: detachable DOC_LIBRARY_EHTML
+			-- Pick and drop back to the main library documentation.
+
+;note
 	copyright: "[
 			Eiffel Forum License, version 2
 

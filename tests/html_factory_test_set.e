@@ -1,4 +1,4 @@
-note	
+note
 	description: "[
 		Eiffel tests that can be executed by testing tool.
 	]"
@@ -29,7 +29,7 @@ feature -- Test routines
 		note
 			how: "[
 				By producing the HTML5 index page that duplicates the CSS Slidy example. This file
-				is generated in the test and then written to the docs directory. Run that file to
+				is generated in the test and then written to the "documentation" directory. Run that file to
 				finally prove that the HTML generation was successful.
 				]"
 		local
@@ -121,7 +121,7 @@ feature -- Test routines
 			l_content.append_string (l_factory.indent_one_level_and_then_newline (l_body))
 			l_page := l_factory.html_page (l_content, "en", Void)
 
-			create l_index_html.make_create_read_write (".\docs\CSSslidy-gh-pages\index_generated_for_testing.html")
+			create l_index_html.make_create_read_write (".\documentation\CSSslidy-gh-pages\index_generated_for_testing.html")
 			l_index_html.put_string (l_page)
 			l_index_html.close
 		end
