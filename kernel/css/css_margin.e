@@ -69,7 +69,7 @@ create
 	make_shorthand_all,
 	make_shorthand_t_lr_b,
 	make_shorthand_tb_lr,
-	make_shorthand_tlbr,
+	make_shorthand_tblr,
 	make
 
 feature {NONE} -- Initialization
@@ -128,7 +128,7 @@ feature {NONE} -- Initialization
 			make ([[a_top_bottom, a_uom], [0, Void], [a_left_right, a_uom], [0, Void]])
 		end
 
-	make_shorthand_tlbr (a_tlbr: INTEGER; a_uom: STRING)
+	make_shorthand_tblr (a_tlbr: INTEGER; a_uom: STRING)
 			-- Initialize Current with `a_tlbr' as `a_uom'.
 		note
 			purpose: "[
@@ -173,69 +173,78 @@ feature -- Access
 				Result.append_string (right.value.out)
 				Result.append_string (right.uom)
 				Result.append_character (';')
-			elseif attached top.uom and attached bottom.uom and (not attached left.uom xor not attached right.uom) then
+			elseif attached top.uom as al_top_uom and then
+					attached bottom.uom as al_bottom_uom and then
+					(not attached left.uom xor not attached right.uom) then
 				Result := "margin "
-				Result.append_string (top.value.out)
-				Result.append_string (top.uom)
-				Result.append_character (' ')
-				if not attached left.uom then
-					Result.append_string (right.value.out)
-					Result.append_string (right.uom)
-				else
-					Result.append_string (left.value.out)
-					Result.append_string (left.uom)
+				Result.append_string (value_uom_pair (top.value, al_top_uom, not inject_semicolon))
+				if not attached left.uom and then attached right.uom as al_uom then
+					Result.append_string (value_uom_pair (right.value, al_uom, not inject_semicolon))
+				elseif attached left.uom as al_uom then
+					Result.append_string (value_uom_pair (left.value, al_uom, not inject_semicolon))
 				end
-				Result.append_character (' ')
-				Result.append_string (bottom.value.out)
-				Result.append_string (bottom.uom)
-				Result.append_character (';')
-			elseif attached top.uom and attached left.uom and (not attached bottom.uom and not attached right.uom) then
+				Result.append_string (value_uom_pair (bottom.value, al_bottom_uom, inject_semicolon))
+			elseif attached top.uom as al_top_uom and then attached left.uom as al_left_uom and (not attached bottom.uom and not attached right.uom) then
 				Result := "margin "
-				Result.append_string (top.value.out) -- Applies to top and bottom
-				Result.append_string (top.uom)
-				Result.append_character (' ')
-				Result.append_string (left.value.out) -- Applies to right and left
-				Result.append_string (left.uom)
-				Result.append_character (';')
-			elseif attached top.uom and (not attached bottom.uom and not attached left.uom and not attached right.uom) then
+				Result.append_string (value_uom_pair (top.value, al_top_uom, not inject_semicolon))
+				Result.append_string (value_uom_pair (left.value, al_left_uom, inject_semicolon))
+			elseif attached top.uom as al_top_uom and (not attached bottom.uom and not attached left.uom and not attached right.uom) then
 				Result := "margin "
-				Result.append_string (top.value.out) -- Applies to top, bottom, right, and left
-				Result.append_string (top.uom)
-				Result.append_character (';')
-			else -- Otherwise,
-				if attached top.uom then
-					Result := "margin-top:"
-					Result.append_string (top.value.out)
-					Result.append_string (top.uom)
-					Result.append_character (';')
+				Result.append_string (value_uom_pair (top.value, al_top_uom, inject_semicolon))
+			else -- Otherwise, ...
+				create Result.make_empty
+				if attached top.uom as al_uom then
+					Result.append_string ("margin-top:")
+					Result.append_string (value_uom_pair (top.value, al_uom, inject_semicolon))
+					Result.append_character (' ')
 				end
-				if attached bottom.uom then
-					Result := "margin-bottom:"
-					Result.append_string (bottom.value.out)
-					Result.append_string (bottom.uom)
-					Result.append_character (';')
+				if attached bottom.uom as al_uom then
+					Result.append_string ("margin-bottom:")
+					Result.append_string (value_uom_pair (bottom.value, al_uom, inject_semicolon))
+					Result.append_character (' ')
 				end
-				if attached left.uom then
-					Result := "margin-left:"
-					Result.append_string (left.value.out)
-					Result.append_string (left.uom)
-					Result.append_character (';')
+				if attached left.uom as al_uom then
+					Result.append_string ("margin-left:")
+					Result.append_string (value_uom_pair (left.value, al_uom, inject_semicolon))
+					Result.append_character (' ')
 				end
-				if attached right.uom then
-					Result := "margin-right:"
-					Result.append_string (right.value.out)
-					Result.append_string (right.uom)
-					Result.append_character (';')
+				if attached right.uom as al_uom then
+					Result.append_string ("margin-right:")
+					Result.append_string (value_uom_pair (right.value, al_uom, inject_semicolon))
+					Result.append_character (' ')
 				end
+				Result.left_adjust
+				Result.right_adjust
 			end
 		end
 
 feature {NONE} -- Implementation
 
+	value_uom_pair (a_value: INTEGER; a_uom: STRING; a_separate: BOOLEAN): STRING
+			-- An well-formed value-uom pair.
+		do
+			if a_uom.same_string ({CSS_LENGTH_CONSTANTS}.auto) then
+				check no_auto_value: a_value = 0 end
+				Result := {CSS_LENGTH_CONSTANTS}.auto
+			elseif a_uom.same_string ({CSS_LENGTH_CONSTANTS}.inherit_kw) then
+				Result := {CSS_LENGTH_CONSTANTS}.inherit_kw
+			else
+				Result := a_value.out
+				Result.append_string (a_uom)
+				if a_separate then
+					Result.append_character (';')
+				else
+					Result.append_character (' ')
+				end
+			end
+		end
+
 	top,
 	bottom,
 	left,
 	right: TUPLE [value: INTEGER; uom: detachable STRING]
+
+	inject_semicolon: BOOLEAN = True
 
 	creation_objects_anchor: detachable TUPLE [top, bottom, left, right: like top]
 			-- Type anchor for objects required for creation.

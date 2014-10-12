@@ -20,12 +20,34 @@ feature -- Test routines
 		local
 			l_decl: CSS_MARGIN
 		do
-			create l_decl.make ([[1, "px"], [2, "px"], [3, "px"], [4, "px"]])
+				-- Set all four manually (through make), but expect the short-hand result.
+			create l_decl.make ([[1, {CSS_LENGTH_CONSTANTS}.px], [2, {CSS_LENGTH_CONSTANTS}.px], [3, {CSS_LENGTH_CONSTANTS}.px], [4, {CSS_LENGTH_CONSTANTS}.px]])
 			assert_strings_equal ("margin_4", "margin 1px 2px 3px 4px;", l_decl.string)
-			create l_decl.make_shorthand_all (1, 2, 3, 4, "px")
+
+				-- Use the 'all' short-hand for short-hand result.
+			create l_decl.make_shorthand_all (1, 2, 3, 4, {CSS_LENGTH_CONSTANTS}.px)
 			assert_strings_equal ("margin_all", "margin 1px 2px 3px 4px;", l_decl.string)
-			create l_decl.make_shorthand_t_lr_b (1, 34, 2, "px")
+
+				-- Use the top [left-right] bottom version for short-hand result.
+			create l_decl.make_shorthand_t_lr_b (1, 34, 2, {CSS_LENGTH_CONSTANTS}.px)
 			assert_strings_equal ("margin_t_lr_b", "margin 1px 34px 2px;", l_decl.string)
+
+				-- Use the top-bottom and left-right short-hand for short-hand result.
+			create l_decl.make_shorthand_tb_lr (12, 34, {CSS_LENGTH_CONSTANTS}.px)
+			assert_strings_equal ("margin_tb_lr", "margin 12px 34px;", l_decl.string)
+
+				-- Use the top-bottom-left-right short-hand for short-hand result.
+			create l_decl.make_shorthand_tblr (1234, {CSS_LENGTH_CONSTANTS}.px)
+			assert_strings_equal ("margin_tblr", "margin 1234px;", l_decl.string)
+
+				-- Make a non-short-hand result of just top and right.
+			create l_decl.make ([[1, {CSS_LENGTH_CONSTANTS}.px], [0, Void], [0, Void], [4, {CSS_LENGTH_CONSTANTS}.px]])
+			assert_strings_equal ("margin_t_r", "margin-top:1px; margin-right:4px;", l_decl.string)
+
+				-- Make a non-short-hand result of just top and left.
+			create l_decl.make ([[1, {CSS_LENGTH_CONSTANTS}.px], [0, Void], [3, {CSS_LENGTH_CONSTANTS}.px], [0, Void]])
+			assert_strings_equal ("margin_t_r", "margin-top:1px; margin-left:3px;", l_decl.string)
+
 		end
 
 note

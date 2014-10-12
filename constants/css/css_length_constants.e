@@ -24,6 +24,15 @@ feature -- Status Report
 
 feature -- Constants: Relative Units
 
+	auto: STRING = "auto"
+			-- The browser calculates a margin
+
+	inherit_kw: STRING = "inherit"
+			-- Specifies that the margin should be inherited from the parent element
+
+	percent: STRING = "%%"
+			-- Specifies a margin in percent of the width of the containing element
+
 	em: STRING = "em"
 			--‘em’		font size of the element
 
