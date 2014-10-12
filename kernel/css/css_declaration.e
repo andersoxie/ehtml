@@ -27,6 +27,11 @@ feature {NONE} -- Initialization
 
 feature -- Access
 
+	name: STRING
+			-- Declaration identifier name.
+		deferred
+		end
+
 	property_value_pairs: ARRAY [TUPLE [property, value: STRING]]
 			-- `property_value_pairs' for Current as a collection of key-value TUPLEs.
 		attribute
