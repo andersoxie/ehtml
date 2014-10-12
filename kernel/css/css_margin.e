@@ -2,6 +2,14 @@
 	description: "[
 		Representation of a "margin" CSS Style Rule Declaration.
 		]"
+	how: "[
+		By providing either a short-hand version or long-hand version of the "margin" CSS Declaration.
+		
+		1. Calls directly to the `make' will always produce a long-handed version.
+		2. Calls directly to `make_shorthand_*' always produce a short-handed version.
+		3. Margins set to "auto" and "inherit" will ignore the `a_value: INTEGER' because no value is needed.
+			Passing a non-zero value will result in an invariant failure.
+		]"
 	design: "[
 		Value		Description
 		==========	============================
@@ -21,17 +29,15 @@
 
 		Margin - Shorthand property
 
-		To shorten the code, it is possible to specify all the margin properties in one property. This is called a shorthand property.
-
-		The shorthand property for all the margin properties is "margin":
-
-		Example
+		To shorten the code, it is possible to specify all the margin properties in one property.
+			This is called a shorthand property. The shorthand property for all the margin properties
+			is "margin":
 
 		┌─────────────────────────────────────────┐
 			p { margin: 100px 50px; }
 		└─────────────────────────────────────────┘
 
-		The margin property can have from one to four values.
+		The "margin" (short-hand) property can have from one to four values.
 
 		margin: 25px 50px 75px 100px;
 			top margin is 25px
@@ -91,6 +97,7 @@ feature {NONE} -- Initialization
 			valid_uom: is_valid_uom (a_uom)
 		do
 			make ([[a_top, a_uom], [a_bottom, a_uom], [a_left, a_uom], [a_right, a_uom]])
+			is_short_handed := True
 		end
 
 	make_shorthand_t_lr_b (a_top, a_left_right, a_bottom: INTEGER; a_uom: STRING)
@@ -109,6 +116,7 @@ feature {NONE} -- Initialization
 			valid_uom: is_valid_uom (a_uom)
 		do
 			make ([[a_top, a_uom], [a_bottom, a_uom], [a_left_right, a_uom], [0, Void]])
+			is_short_handed := True
 		end
 
 	make_shorthand_tb_lr (a_top_bottom, a_left_right: INTEGER; a_uom: STRING)
@@ -126,6 +134,7 @@ feature {NONE} -- Initialization
 			valid_uom: is_valid_uom (a_uom)
 		do
 			make ([[a_top_bottom, a_uom], [0, Void], [a_left_right, a_uom], [0, Void]])
+			is_short_handed := True
 		end
 
 	make_shorthand_tblr (a_tlbr: INTEGER; a_uom: STRING)
@@ -142,6 +151,7 @@ feature {NONE} -- Initialization
 			valid_uom: is_valid_uom (a_uom)
 		do
 			make ([[a_tlbr, a_uom], [0, Void], [0, Void], [0, Void]])
+			is_short_handed := True
 		end
 
 	make (a_objects: attached like creation_objects_anchor)
@@ -151,6 +161,7 @@ feature {NONE} -- Initialization
 			bottom := a_objects.bottom
 			left := a_objects.left
 			right := a_objects.right
+			is_short_handed := False
 		end
 
 feature -- Access
@@ -159,7 +170,31 @@ feature -- Access
 			-- <Precursor>
 		do
 			Result := ""
-			if attached top.uom and attached bottom.uom and attached left.uom and attached right.uom then
+			if not is_short_handed then
+				create Result.make_empty
+				if attached top.uom as al_uom then
+					Result.append_string ("margin-top:")
+					Result.append_string (value_uom_pair (top.value, al_uom, inject_semicolon))
+					Result.append_character (' ')
+				end
+				if attached bottom.uom as al_uom then
+					Result.append_string ("margin-bottom:")
+					Result.append_string (value_uom_pair (bottom.value, al_uom, inject_semicolon))
+					Result.append_character (' ')
+				end
+				if attached left.uom as al_uom then
+					Result.append_string ("margin-left:")
+					Result.append_string (value_uom_pair (left.value, al_uom, inject_semicolon))
+					Result.append_character (' ')
+				end
+				if attached right.uom as al_uom then
+					Result.append_string ("margin-right:")
+					Result.append_string (value_uom_pair (right.value, al_uom, inject_semicolon))
+					Result.append_character (' ')
+				end
+				Result.left_adjust
+				Result.right_adjust
+			elseif attached top.uom and attached bottom.uom and attached left.uom and attached right.uom then
 				Result := "margin "
 				Result.append_string (top.value.out)
 				Result.append_string (top.uom)
@@ -191,30 +226,6 @@ feature -- Access
 			elseif attached top.uom as al_top_uom and (not attached bottom.uom and not attached left.uom and not attached right.uom) then
 				Result := "margin "
 				Result.append_string (value_uom_pair (top.value, al_top_uom, inject_semicolon))
-			else -- Otherwise, ...
-				create Result.make_empty
-				if attached top.uom as al_uom then
-					Result.append_string ("margin-top:")
-					Result.append_string (value_uom_pair (top.value, al_uom, inject_semicolon))
-					Result.append_character (' ')
-				end
-				if attached bottom.uom as al_uom then
-					Result.append_string ("margin-bottom:")
-					Result.append_string (value_uom_pair (bottom.value, al_uom, inject_semicolon))
-					Result.append_character (' ')
-				end
-				if attached left.uom as al_uom then
-					Result.append_string ("margin-left:")
-					Result.append_string (value_uom_pair (left.value, al_uom, inject_semicolon))
-					Result.append_character (' ')
-				end
-				if attached right.uom as al_uom then
-					Result.append_string ("margin-right:")
-					Result.append_string (value_uom_pair (right.value, al_uom, inject_semicolon))
-					Result.append_character (' ')
-				end
-				Result.left_adjust
-				Result.right_adjust
 			end
 		end
 
@@ -243,11 +254,30 @@ feature {NONE} -- Implementation
 	bottom,
 	left,
 	right: TUPLE [value: INTEGER; uom: detachable STRING]
+			-- Margin setting for `top', `bottom', `left', and `right' margins.
 
 	inject_semicolon: BOOLEAN = True
+			-- Semicolon character injection flag, default to True.
+
+	is_short_handed: BOOLEAN
+			-- Does Current `string' produce short-hand version or long-hand version?
 
 	creation_objects_anchor: detachable TUPLE [top, bottom, left, right: like top]
 			-- Type anchor for objects required for creation.
+
+invariant
+	valid_top: attached top.uom as al_uom implies
+					((al_uom.same_string ({CSS_LENGTH_CONSTANTS}.auto) xor
+						al_uom.same_string ({CSS_LENGTH_CONSTANTS}.inherit_kw)) implies top.value = 0) and then is_valid_uom (al_uom)
+	valid_bottom: attached bottom.uom as al_uom implies
+					((al_uom.same_string ({CSS_LENGTH_CONSTANTS}.auto) xor
+						al_uom.same_string ({CSS_LENGTH_CONSTANTS}.inherit_kw)) implies bottom.value = 0) and then is_valid_uom (al_uom)
+	valid_left: attached left.uom as al_uom implies
+					((al_uom.same_string ({CSS_LENGTH_CONSTANTS}.auto) xor
+						al_uom.same_string ({CSS_LENGTH_CONSTANTS}.inherit_kw)) implies left.value = 0) and then is_valid_uom (al_uom)
+	valid_right: attached right.uom as al_uom implies
+					((al_uom.same_string ({CSS_LENGTH_CONSTANTS}.auto) xor
+						al_uom.same_string ({CSS_LENGTH_CONSTANTS}.inherit_kw)) implies right.value = 0) and then is_valid_uom (al_uom)
 
 ;note
 	copyright: "[
