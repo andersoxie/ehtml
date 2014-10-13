@@ -1,4 +1,4 @@
-note
+﻿note
 	description: "[
 		CSS Style Rule Declaration
 		]"
@@ -10,6 +10,53 @@ note
 		By providing the basis for forming descendant classes representing potential
 		instances of actual CSS style rules that can be applied to various HTML_ELEMENT
 		objects.
+		]"
+	examples: "[
+		┌─────────────────────────────────────────────────────────┬────────┬─────────────────────────────────────────────────────────────────────────────────────────────┐
+		│Property (Key)											  │	   =   │						Value(s)															 │
+		├─────────┬───┬───────────┬───┬───────────────────────────┼────────┼──────────────────────────────────────────────────────────────────────────────┬──────────────┤
+		│first-id │	- │	second-id │	- │	third-id				  │	becomes│manifest-number / function / name-list / shorthand-list	uom | uom-list		  │	separator	 │
+		├─────────┼───┼───────────┼───┼───────────────────────────┼────────┼──────────────────────────────────────────────────────────────────────────────┼──────────────┤
+		│font						-	family						[ : ]	[ csv_list ... ]																[ ; ]
+		│background					-	image						[ : ]	[ f ( x ) ... ]																	[ ; ]
+		│filter														[ : ]	[ f ( x ) ... ]																	[ ; ]
+		│list		-	style		-	image						[ : ]	[ f ( x ) ... ]																	[ ; ]			
+		│background													[ : ]	[ shorthand_list ... ]															[ ; ]
+		│border						-	style						[ : ]	[ shorthand_list ... ]															[ ; ]
+		│border														[ : ]	[ shorthand_list ... ]															[ ; ]
+		│list														[ : ]	[ shorthand_list ... ]															[ ; ]
+		│margin														[ : ]	[ shorthand_list ... ]															[ ; ]
+		│outline													[ : ]	[ shorthand_list ... ]															[ ; ]
+		│padding		-											[ : ]	[ shorthand_list ... ]															[ ; ]
+		│clear														[ : ]	both																			[ ; ]
+		│text						-	align						[ : ]	center | right | left															[ ; ]
+		│list		-	style		-	type						[ : ]	circle | square | ...															[ ; ]
+		│border						-	collapse					[ : ]	collapse																		[ ; ]
+		│position													[ : ]	fixed | relative																[ ; ]
+		│visibility													[ : ]	hidden																			[ ; ]
+		│height														[ : ]	int	[ px | pc | cm | in | ... ]													[ ; ]
+		│margin		- [ top | bottom | left | right ]				[ : ]	int	[ px | pc | cm | in | ... ]													[ ; ]
+		│max						-	height						[ : ]	int	[ px | pc | cm | in | ... ]													[ ; ]
+		│max						-	width						[ : ]	int	[ px | pc | cm | in | ... ]													[ ; ]
+		│min						-	height						[ : ]	int	[ px | pc | cm | in | ... ]													[ ; ]
+		│min						-	width						[ : ]	int	[ px | pc | cm | in | ... ]													[ ; ]
+		│padding	- [ top | bottom | left | right ]				[ : ]	int	[ px | pc | cm | in | ... ]													[ ; ]
+		│right														[ : ]	int	[ px | pc | cm | in | ... ]													[ ; ]
+		│top														[ : ]	int	[ px | pc | cm | in | ... ]													[ ; ]
+		│width														[ : ]	int	[ px | pc | cm | in | ... ]													[ ; ]
+		│outline					-	width						[ : ]	int | [ thin | medium | thick | length | inherit ]	[ px | pc | cm | in | ... ]	[ ; ]
+		│background					-	color						[ : ]	name | #hex | rgb ( n, n, n )													[ ; ]	
+		│color														[ : ]	name | #hex | rgb ( n, n, n )													[ ; ]
+		│outline					-	color						[ : ]	name | #hex | rgb ( n, n, n )													[ ; ]
+		│border		- [ top | bottom | left | right ]	-	style	[ : ]	none | dotted | dashed | solid ...												[ ; ]
+		│outline					-	style						[ : ]	none | dotted | dashed | solid ...												[ ; ]
+		│display													[ : ]	none | inline | block															[ ; ]
+		│text						-	decoration					[ : ]	none | underline																[ ; ]
+		│font						-	style						[ : ]	normal | italic | oblique														[ ; ]
+		│font						-	size						[ : ]	NOTE: Use <h1> ... <h6> | int | real	px | em									[ ; ]
+		│opacity													[ : ]	real	uom																		[ ; ]
+		│float														[ : ]	right | left																	[ ; ]
+		└─────────┴───┴───────────┴───┴───────────────────────────┴────────┴──────────────────────────────────────────────────────────────────────────────┴──────────────┘
 		]"
 	author: "Larry Rix"
 	date: "$Date$"
@@ -44,6 +91,46 @@ feature -- Generators
 			-- Well-formed CSS Style Rule Declaration.
 		deferred
 		end
+
+feature {NONE} -- Implementation: Access
+
+	first_id,
+	second_id,
+	third_id: detachable STRING
+			-- First, Second, and Third Identifier names for Current.
+
+	becomes: CHARACTER = ':'
+			-- Key:Value or Property:Value pair separator for Current.
+
+	manifest_integer: INTEGER
+			-- Integer value (if any) for Current.
+
+	manifest_real: REAL
+			-- Real value (if any) for Current.
+
+	function: detachable ANY
+			-- Function for Current. (example: color: rgb(255,0,0);)
+
+	value_name: detachable STRING
+			-- Optional `value_name' for Current.
+
+	value_name_list: ARRAY [STRING]
+			-- Names available to `value_name' as a list.
+		attribute
+			Result := <<>>
+		end
+
+	shorthand_list: ARRAY [CSS_DECLARATION]
+			-- When Current can be a short-hand list, these items are the source of the list.
+		attribute
+			Result := <<>>
+		end
+
+	uom: detachable STRING
+			-- When `manifest_integer' or `manifest_real' are in play for Current.
+
+	separator: CHARACTER = ';'
+			-- Character placed at the end of each Current.
 
 feature {NONE} -- Implementation
 

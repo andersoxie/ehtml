@@ -1,5 +1,7 @@
 note
-	description: "Summary description for {HTML_COLOR_CONSTANTS}."
+	description: "[
+		HTML Color Constants
+		]"
 	author: "Larry Rix"
 	date: "$Date$"
 	revision: "$Revision$"
@@ -28,6 +30,10 @@ feature -- Status Report
 
 	rgb_for_name (a_name: STRING): TUPLE [red, green, blue: INTEGER]
 			-- RGB TUPLE for `a_name' in `color_hash'
+		note
+			intent: "[
+				rgb_for_name ({HTML_COLOR_CONSTANTS}.[Color_name]) --> [R, G, B]
+				]"
 		do
 			check has_name_and_index: attached {INTEGER} hash_index_for_name (a_name) as al_index and then al_index > 0 then
 				Result := [color_hash.iteration_item (al_index).red, color_hash.iteration_item (al_index).green, color_hash.iteration_item (al_index).blue]
