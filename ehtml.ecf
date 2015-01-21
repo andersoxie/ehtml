@@ -7,6 +7,7 @@
 		<file_rule>
 			<exclude>/EIFGENs$</exclude>
 			<exclude>/CVS$</exclude>
+			<exclude>/documentation$</exclude>
 			<exclude>/.svn$</exclude>
 			<exclude>/.git$</exclude>
 			<exclude>/tests$</exclude>

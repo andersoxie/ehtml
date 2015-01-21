@@ -1,6 +1,20 @@
 note
+	title: "Root Notion of an HTML Element."
 	description: "[
 		Abstraction of an HTML Element.
+		]"
+	basics: "[
+		An HTML element is something like <body>, <form>, <b>, <p>, and so on. Therefore,
+		this class is designed to capture features that are fundamental to all HTML
+		elements, specifically HTML-5.
+
+		`tag' is HTML-5 element tag (e.g. "body" for <body>). Set as constant in descendent.
+
+		`append_html' appends some given "HTML_string" with <tag> and </tag> enclosure.
+
+		`text' content of Current (e.g. <title>This is the text content ...</title>).
+
+		`content' as a STRING of the `contents' of Current appended to the end of a parent STRING.
 		]"
 	author: "Larry Rix"
 	date: "$Date$"
@@ -63,12 +77,20 @@ feature -- Access
 				By appending the HTML contents of Current to `a_parent' by passing
 				`a_parent' into each `contents' item.
 				]"
+			example: "[
+				<html><body>`content' <-- which is then ready to have </body> appended.
+				]"
 		do
 			across contents as ic_contents loop ic_contents.item.append_html (a_parent) end
 		end
 
 	contents: ARRAYED_LIST [HTML_ELEMENT]
-			-- A list of content items as HTML_ELEMENTs.
+			-- HTML_ELEMENT items subordinate to Current.
+		note
+			example: "[
+				Current might have <body><div> ... </div><div> ... </div></body> and be subordinate
+				to <html>.
+				]"
 		attribute
 			create Result.make (0)
 		end
