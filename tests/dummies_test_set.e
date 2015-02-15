@@ -18,23 +18,44 @@ inherit
 
 feature -- Test routines
 
-	basic_page_test
+	dummies_ch_1_basic_page_test
 			-- Page #10 "Basic Page"
 		note
 			testing:  "execution/isolated"
 			EIS: "name=basic_page", "protocol=URI", "tag=example",
 					"src=http://www.aharrisbooks.net/haio"
-			EIS: "name=basic_page", "protocol=URI", "tag=example",
-					"src=http://www.aharrisbooks.net/haio/book_1/chap_1/myFirst.html"
-			EIS: "name=basic_page_created", "protocol=URI", "tag=local_example",
+			EIS: "name=basicUL_page", "protocol=URI", "tag=example",
+					"src=http://www.aharrisbooks.net/haio/book_1/chap_4/basicUL.html"
+			EIS: "name=basicUL_page_created", "protocol=URI", "tag=local_example",
 					"src=file:///$GITHUB/ehtml/tests/output/myFirst.html"
 		local
-			l_page: MOCK_BASIC_PAGE
+			l_page: DUMMIES_CH_1_BASIC_PAGE
 			l_file: RAW_FILE
 		do
 			create l_page
 			assert_strings_equal ("basic_page", basic_page, l_page.html)
 			create l_file.make_open_write (".\tests\output\myFirst.html")
+			l_file.put_string (l_page.html)
+			l_file.close
+		end
+
+	dummies_ch_4_basicul_test
+			-- ???
+		note
+			testing:  "execution/isolated"
+			EIS: "name=basic_page", "protocol=URI", "tag=example",
+					"src=http://www.aharrisbooks.net/haio"
+			EIS: "name=basic_page", "protocol=URI", "tag=example",
+					"src=http://www.aharrisbooks.net/haio/book_1/chap_4/basicUL.html"
+			EIS: "name=basic_page_created", "protocol=URI", "tag=local_example",
+					"src=file:///$GITHUB/ehtml/tests/output/basicUL.html"
+		local
+			l_page: DUMMIES_CH_4_BASICUL
+			l_file: RAW_FILE
+		do
+			create l_page
+			assert_strings_equal ("basicUL_page", basicUL, l_page.html)
+			create l_file.make_open_write (".\tests\output\basicUL.html")
 			l_file.put_string (l_page.html)
 			l_file.close
 		end
@@ -52,6 +73,25 @@ feature {NONE} -- Test Constants
 <h1>
 This is my first web page!</h1><p>
 This is the first web page I've ever made, and I am extremely proud of it. it is so cool!</p></body></html>
+]"
+
+	basicUL: STRING = "[
+<!doctype >
+<html lang=en-US>
+<head>
+	<meta charset="UTF-8"
+<title>basicUL.html</title>
+</head>
+<body>
+<h1>
+Basic Lists</h1><h2>
+Common Web Browsers</h2><ul>
+<li>
+Firefox</li><li>
+Chrome</li><li>
+Internet Explorer</li><li>
+Opera</li><li>
+Safari</li></ul></body></html>
 ]"
 
 ;note

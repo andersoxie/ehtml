@@ -11,7 +11,7 @@ note
 	date: "$Date$"
 	revision: "$Revision$"
 
-class
+deferred class
 	HTML_ELEMENT_HELPER
 
 feature {NONE} -- Implementation: Tag Primitives
@@ -91,7 +91,20 @@ feature {NONE} -- Implementation: Attribute Primitives
 			padded: Result [1].is_space and Result [Result.count].is_space
 		end
 
-note
+feature {NONE} -- Implementation: Factories
+
+	factory: HTML_FACTORY
+			-- Factory for Current.
+		do
+			check has_factory: attached internal_factory as al_factory then
+				Result := al_factory
+			end
+		end
+
+	internal_factory: detachable HTML_FACTORY
+			-- Factory for Current.
+
+;note
 	copyright: "[
 			Eiffel Forum License, version 2
 

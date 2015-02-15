@@ -34,8 +34,6 @@ feature -- Access
 
 	html: STRING
 			-- Main "Hello" web page HTML.
-		local
-			l_content: STRING
 		do
 			Result := factory.indent_one_level_and_then_newline (body.twin)
 		end

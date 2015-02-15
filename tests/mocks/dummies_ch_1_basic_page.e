@@ -1,16 +1,16 @@
 note
-	description: "[
-		Representation of an HTML <html> page element.
-		]"
+	description: "Summary description for {DUMMIES_CH_1_BASIC_PAGE}."
 	author: "Larry Rix"
 
 class
-	HTML_PAGE
+	DUMMIES_CH_1_BASIC_PAGE
 
 inherit
-	HTML_ELEMENT
-		redefine
-			append_html
+	HTML_PAGE
+
+	HTML_CONSTANTS
+		undefine
+			default_create
 		end
 
 create
@@ -19,17 +19,20 @@ create
 
 feature -- Access
 
-	tag: STRING
-			-- <td> tag of Current.
-		once
-			Result := {HTML_CONSTANTS}.html_tag_name
+	html: STRING
+			-- Main "Hello" web page HTML.
+		do
+			Result := factory.html_page (factory.head ("<meta charset=%"UTF-8%"%N<!-- myFirst html -->") + "%N" + body, "en-US", "")
 		end
 
-	append_html (a_parent: STRING)
-			-- <Precursor>
+feature {NONE} -- Implementation
+
+	body: STRING
+		local
+			l_content: STRING
 		do
-			a_parent.append_string ("<!DOCTYPE html>")
-			Precursor (a_parent)
+			l_content := factory.paragraph_with_header ("This is my first web page!", "This is the first web page I've ever made, and I am extremely proud of it. it is so cool!", 1)
+			Result := factory.tag_contented (body_tag_name, no_manaul_attributes, l_content, no_global_attributes, has_end_tag, not suppress_newlines)
 		end
 
 note

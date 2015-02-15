@@ -196,6 +196,11 @@ feature -- Constants: Tag names
 	title_tag_name: STRING = "title"
 
 		-- U
+
+	unordered_list_tag_name: STRING = "ul"
+
+	unordered_list_item_tag_name: STRING = "li"
+
 		-- V
 		-- W
 		-- X

@@ -230,6 +230,32 @@ feature -- Access: Tables
 			Result := tag_contented (table_tag_name, Void, a_content, no_global_attributes, has_end_tag, suppress_newlines)
 		end
 
+feature -- Access: <hN> ... </hN>
+
+	heading_1 (a_heading_text: STRING): STRING
+			-- Create an <h1> with `a_heading_text'.
+		do
+			Result := tag_contented (heading_1_tag_name, no_manaul_attributes, a_heading_text, no_global_attributes, has_end_tag, not suppress_newlines)
+		end
+
+	heading_2 (a_heading_text: STRING): STRING
+			-- Create an <h2> with `a_heading_text'.
+		do
+			Result := tag_contented (heading_2_tag_name, no_manaul_attributes, a_heading_text, no_global_attributes, has_end_tag, not suppress_newlines)
+		end
+
+	heading_3 (a_heading_text: STRING): STRING
+			-- Create an <h3> with `a_heading_text'.
+		do
+			Result := tag_contented (heading_3_tag_name, no_manaul_attributes, a_heading_text, no_global_attributes, has_end_tag, not suppress_newlines)
+		end
+
+	heading_4 (a_heading_text: STRING): STRING
+			-- Create an <h4> with `a_heading_text'.
+		do
+			Result := tag_contented (heading_4_tag_name, no_manaul_attributes, a_heading_text, no_global_attributes, has_end_tag, not suppress_newlines)
+		end
+
 feature -- Access: <p> ... </p>
 
 	paragraph_with_header (a_heading_text, a_paragraph_text: STRING; a_heading_number: INTEGER): STRING
@@ -259,6 +285,20 @@ feature -- Access: <p> ... </p>
 			Result := tag_contented (paragraph_tag_name, Void, a_content, no_global_attributes, has_end_tag, not suppress_newlines)
 		ensure
 			valid_paragrah: paragraph_regex.matches (Result)
+		end
+
+feature -- Access: <ul> ... </ul>
+
+	unordered_list (a_content: ARRAY [STRING]): STRING
+			-- <ul> [a_content] </ul>
+		local
+			l_list_items: STRING
+		do
+			create l_list_items.make_empty
+			across a_content as ic_list loop
+				l_list_items.append_string (tag_contented (unordered_list_item_tag_name, Void, ic_list.item, no_global_attributes, has_end_tag, not suppress_newlines))
+			end
+			Result := tag_contented (unordered_list_tag_name, Void, l_list_items, no_global_attributes, has_end_tag, not suppress_newlines)
 		end
 
 feature -- Access: <[tag]> ... </[tag]> w/Content

@@ -17,20 +17,29 @@ note
 		`content' as a STRING of the `contents' of Current appended to the end of a parent STRING.
 		]"
 	author: "Larry Rix"
-	date: "$Date$"
-	revision: "$Revision$"
 
 deferred class
 	HTML_ELEMENT
 
 inherit
 	HTML_ELEMENT_HELPER
+		redefine
+			default_create
+		end
 
 feature {NONE} -- Initialization
+
+	default_create
+			-- <Precursor>
+		do
+			Precursor
+			create internal_factory
+		end
 
 	make_with_id (a_id: STRING)
 			-- Initialize Current with optional ID attribute.
 		do
+			default_create
 			add_attribute (["id", a_id, True])
 		end
 

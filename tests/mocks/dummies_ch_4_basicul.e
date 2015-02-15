@@ -1,55 +1,47 @@
 note
-	description: "Summary description for {MOCK_BASIC_PAGE}."
-	author: ""
-	date: "$Date$"
-	revision: "$Revision$"
+	description: "Summary description for {DUMMIES_CH_4_BASICUL}."
+	author: "Larry Rix"
+	EIS: "name=basic_page", "protocol=URI", "tag=example",
+			"src=http://www.aharrisbooks.net/haio"
+	EIS: "name=basic_page", "protocol=URI", "tag=example",
+			"src=http://www.aharrisbooks.net/haio/book_1/chap_4/basicUL.html"
 
 class
-	MOCK_BASIC_PAGE
+	DUMMIES_CH_4_BASICUL
 
 inherit
+	HTML_PAGE
+
 	HTML_CONSTANTS
-		redefine
+		undefine
 			default_create
 		end
 
-feature {NONE} -- Initialization
-
-	default_create
-			-- <Precursor>
-		do
-			Precursor
-			create factory
-		end
+create
+	default_create,
+	make_with_id
 
 feature -- Access
 
 	html: STRING
 			-- Main "Hello" web page HTML.
-		local
-			l_content: STRING
 		do
-			Result := factory.html_page (factory.head ("<meta charset=%"UTF-8%"%N<!-- myFirst html -->") + "%N" + body, "en-US", "")
+			Result := factory.html_page (factory.head ("<meta charset=%"UTF-8%"%N<title>basicUL.html</title>") + "%N" + body, "en-US", "")
 		end
 
 feature {NONE} -- Implementation
 
 	body: STRING
 		local
-			l_content,
-			l_header,
-			l_paragraph: STRING
+			l_content: STRING
 		do
-			l_content := factory.paragraph_with_header ("This is my first web page!", "This is the first web page I've ever made, and I am extremely proud of it. it is so cool!", 1)
+			l_content := factory.heading_1 ("Basic Lists")
+			l_content.append_string (factory.heading_2 ("Common Web Browsers"))
+			l_content.append_string (factory.unordered_list (<<"Firefox","Chrome","Internet Explorer","Opera","Safari">>))
 			Result := factory.tag_contented (body_tag_name, no_manaul_attributes, l_content, no_global_attributes, has_end_tag, not suppress_newlines)
 		end
 
-feature {NONE} -- Implementation: Factories
-
-	factory: HTML_FACTORY
-			-- Factory for current
-
-;note
+note
 	copyright: "[
 			Eiffel Forum License, version 2
 
