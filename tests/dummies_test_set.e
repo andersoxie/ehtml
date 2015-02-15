@@ -26,11 +26,17 @@ feature -- Test routines
 					"src=http://www.aharrisbooks.net/haio"
 			EIS: "name=basic_page", "protocol=URI", "tag=example",
 					"src=http://www.aharrisbooks.net/haio/book_1/chap_1/myFirst.html"
+			EIS: "name=basic_page_created", "protocol=URI", "tag=local_example",
+					"src=file:///$GITHUB/ehtml/tests/output/myFirst.html"
 		local
 			l_page: MOCK_BASIC_PAGE
+			l_file: RAW_FILE
 		do
 			create l_page
 			assert_strings_equal ("basic_page", basic_page, l_page.html)
+			create l_file.make_open_write (".\tests\output\myFirst.html")
+			l_file.put_string (l_page.html)
+			l_file.close
 		end
 
 feature {NONE} -- Test Constants
