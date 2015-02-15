@@ -15,24 +15,24 @@ inherit
 
 feature -- Test routines
 
-	w_three_schools_validator_test
-			-- Test generated HTML/CSS with W3-Schools
-		local
-			l_curl: CURL_EASY_EXTERNALS
-			l_page: TEST_HELLO_HOME_PAGE
-			l_string: CURL_STRING
-			l_result: INTEGER
-		do
-			create l_curl
-			create l_page
-			create l_string.make_empty
-			l_curl.setopt_string (l_curl.init, {CURL_OPT_CONSTANTS}.curlopt_url, "http://validator.w3.org")
-			l_result := l_curl.perform (l_curl.init)
---			check is_not_malformed: l_result /= {CURL_CODES}.curle_url_malformat end
---			assert_equals ("result_is_curle_ok", {CURL_CODES}.curle_ok, l_result)
-			l_curl.cleanup (l_curl.init)
---			assert_strings_equal ("page", test_home_page, l_page.html + "%N")
-		end
+--	w_three_schools_validator_test
+--			-- Test generated HTML/CSS with W3-Schools
+--		local
+--			l_curl: CURL_EASY_EXTERNALS
+--			l_page: TEST_HELLO_HOME_PAGE
+--			l_string: CURL_STRING
+--			l_result: INTEGER
+--		do
+--			create l_curl
+--			create l_page
+--			create l_string.make_empty
+--			l_curl.setopt_string (l_curl.init, {CURL_OPT_CONSTANTS}.curlopt_url, "http://validator.w3.org")
+--			l_result := l_curl.perform (l_curl.init)
+----			check is_not_malformed: l_result /= {CURL_CODES}.curle_url_malformat end
+----			assert_equals ("result_is_curle_ok", {CURL_CODES}.curle_ok, l_result)
+--			l_curl.cleanup (l_curl.init)
+----			assert_strings_equal ("page", test_home_page, l_page.html + "%N")
+--		end
 
 	test_empty_table
 			-- Test <table></table>.
