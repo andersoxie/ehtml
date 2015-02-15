@@ -287,7 +287,7 @@ feature -- Access: <p> ... </p>
 			valid_paragrah: paragraph_regex.matches (Result)
 		end
 
-feature -- Access: <ul> ... </ul>
+feature -- Access: Lists
 
 	unordered_list (a_content: ARRAY [STRING]): STRING
 			-- <ul> [a_content] </ul>
@@ -296,9 +296,21 @@ feature -- Access: <ul> ... </ul>
 		do
 			create l_list_items.make_empty
 			across a_content as ic_list loop
-				l_list_items.append_string (tag_contented (unordered_list_item_tag_name, Void, ic_list.item, no_global_attributes, has_end_tag, not suppress_newlines))
+				l_list_items.append_string (tag_contented (list_item_tag_name, Void, ic_list.item, no_global_attributes, has_end_tag, not suppress_newlines))
 			end
 			Result := tag_contented (unordered_list_tag_name, Void, l_list_items, no_global_attributes, has_end_tag, not suppress_newlines)
+		end
+
+	ordered_list (a_content: ARRAY [STRING]): STRING
+			-- <ol> [a_content] </ol>
+		local
+			l_list_items: STRING
+		do
+			create l_list_items.make_empty
+			across a_content as ic_list loop
+				l_list_items.append_string (tag_contented (list_item_tag_name, Void, ic_list.item, no_global_attributes, has_end_tag, not suppress_newlines))
+			end
+			Result := tag_contented (ordered_list_tag_name, Void, l_list_items, no_global_attributes, has_end_tag, not suppress_newlines)
 		end
 
 feature -- Access: <[tag]> ... </[tag]> w/Content

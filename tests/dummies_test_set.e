@@ -19,7 +19,7 @@ inherit
 feature -- Test routines
 
 	dummies_ch_1_basic_page_test
-			-- Page #10 "Basic Page"
+			-- Basic Page Test
 		note
 			testing:  "execution/isolated"
 			EIS: "name=basic_page", "protocol=URI", "tag=example",
@@ -39,8 +39,8 @@ feature -- Test routines
 			l_file.close
 		end
 
-	dummies_ch_4_basicul_test
-			-- ???
+	dummies_ch_4_basicUL_test
+			-- Basic Unorder List Test
 		note
 			testing:  "execution/isolated"
 			EIS: "name=basic_page", "protocol=URI", "tag=example",
@@ -56,6 +56,27 @@ feature -- Test routines
 			create l_page
 			assert_strings_equal ("basicUL_page", basicUL, l_page.html)
 			create l_file.make_open_write (".\tests\output\basicUL.html")
+			l_file.put_string (l_page.html)
+			l_file.close
+		end
+
+	dummies_ch_4_basicOL_test
+			-- Basic Ordered List Test
+		note
+			testing:  "execution/isolated"
+			EIS: "name=basic_page", "protocol=URI", "tag=example",
+					"src=http://www.aharrisbooks.net/haio"
+			EIS: "name=basic_page", "protocol=URI", "tag=example",
+					"src=http://www.aharrisbooks.net/haio/book_1/chap_4/basicOL.html"
+			EIS: "name=basic_page_created", "protocol=URI", "tag=local_example",
+					"src=file:///$GITHUB/ehtml/tests/output/basicOL.html"
+		local
+			l_page: DUMMIES_CH_4_BASICOL
+			l_file: RAW_FILE
+		do
+			create l_page
+			assert_strings_equal ("basicUL_page", basicOL, l_page.html)
+			create l_file.make_open_write (".\tests\output\basicOL.html")
 			l_file.put_string (l_page.html)
 			l_file.close
 		end
@@ -92,6 +113,31 @@ Chrome</li><li>
 Internet Explorer</li><li>
 Opera</li><li>
 Safari</li></ul></body></html>
+]"
+
+	basicOL: STRING = "[
+<!doctype >
+<html lang=en-US>
+<head>
+	<meta charset="UTF-8"
+<title>basicOL.html</title>
+</head>
+<body>
+<h1>
+Basic Ordered List</h1><h2>
+Top ten dog names in the USA</h2><ul>
+<li>
+Max</li><li>
+Jake</li><li>
+Buddy</li><li>
+Maggie</li><li>
+Bear</li><li>
+Molly</li><li>
+Bailey</li><li>
+Shadow</li><li>
+Sam</li><li>
+Lady</li></ul><p>
+data from http://www.bowwow.com.au</p></body></html>
 ]"
 
 ;note

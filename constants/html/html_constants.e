@@ -165,11 +165,15 @@ feature -- Constants: Tag names
 		-- L
 	label_tag_name: STRING = "lablel"
 
+	list_item_tag_name: STRING = "li"
+
 		-- M
 		-- N
 		-- O
 	op_parameter_keyword: STRING = "op"
 			-- Keyword for "op" (operation) parameter.
+
+	ordered_list_tag_name: STRING = "ul"
 
 		-- P
 	post_method_name: STRING = "POST"
@@ -198,8 +202,6 @@ feature -- Constants: Tag names
 		-- U
 
 	unordered_list_tag_name: STRING = "ul"
-
-	unordered_list_item_tag_name: STRING = "li"
 
 		-- V
 		-- W
