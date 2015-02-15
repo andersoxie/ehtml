@@ -232,10 +232,31 @@ feature -- Access: Tables
 
 feature -- Access: <p> ... </p>
 
+	paragraph_with_header (a_heading_text, a_paragraph_text: STRING; a_heading_number: INTEGER): STRING
+			-- create a <p> with `a_paragraph_text', with a preceding <hN> and `a_heading_text'.
+		require
+			valid_heading_number: a_heading_number > 0 and a_heading_number <= 4
+		do
+			create Result.make_empty
+			inspect a_heading_number
+			when 1 then
+				Result.append_string (tag_contented (heading_1_tag_name, no_manaul_attributes, a_heading_text, no_global_attributes, has_end_tag, not suppress_newlines))
+			when 2 then
+				Result.append_string (tag_contented (heading_2_tag_name, no_manaul_attributes, a_heading_text, no_global_attributes, has_end_tag, not suppress_newlines))
+			when 3 then
+				Result.append_string (tag_contented (heading_3_tag_name, no_manaul_attributes, a_heading_text, no_global_attributes, has_end_tag, not suppress_newlines))
+			when 4 then
+				Result.append_string (tag_contented (heading_4_tag_name, no_manaul_attributes, a_heading_text, no_global_attributes, has_end_tag, not suppress_newlines))
+			else
+				check wrong_heading_value: False end
+			end
+			Result.append_string (paragraph (a_paragraph_text))
+		end
+
 	paragraph (a_content: STRING): STRING
 			-- <p> [a_content] </p>
 		do
-			Result := tag_contented (paragraph_tag_name, Void, a_content, no_global_attributes, has_end_tag, suppress_newlines)
+			Result := tag_contented (paragraph_tag_name, Void, a_content, no_global_attributes, has_end_tag, not suppress_newlines)
 		ensure
 			valid_paragrah: paragraph_regex.matches (Result)
 		end

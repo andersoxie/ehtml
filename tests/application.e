@@ -7,6 +7,12 @@ note
 		the appropriate code to replicate the EWF tutorial "hello" application.
 		]"
 	how: "[
+		Run Example
+		===========
+		(1) Compile and run this {APPLICATION}
+		(2) Once running, open a web browser (e.g. Chrome)
+		(3) In the browser, navigate to: http://localhost:9999/hello
+		
 		This test demonstration is based on the EWF Tutorial "hello" application. The
 		project target is presently located at: "{..}\ewf\examples\tutorial\step_4\hello"
 		
@@ -175,24 +181,24 @@ feature -- Responses
 
 feature -- Helper: mapping
 
-	map_agent_uri (a_uri: READABLE_STRING_8; a_action: like {WSF_URI_AGENT_HANDLER}.action; rqst_methods: detachable WSF_REQUEST_METHODS)
+	map_agent_uri (a_uri: READABLE_STRING_8; a_action: like {WSF_URI_AGENT_HANDLER}.action; a_request_methods: detachable WSF_REQUEST_METHODS)
 			-- See `map_agent_uri' class-feature notes (below).
 		note
 			purpose: "[
 				To map a direct call to */hello --> particular feature (e.g. `execute_hello')
 				]"
 		do
-			router.map_with_request_methods (create {WSF_URI_MAPPING}.make (a_uri, create {WSF_URI_AGENT_HANDLER}.make (a_action)), rqst_methods)
+			router.map_with_request_methods (create {WSF_URI_MAPPING}.make (a_uri, create {WSF_URI_AGENT_HANDLER}.make (a_action)), a_request_methods)
 		end
 
-	map_agent_uri_template_response (a_uri_template: READABLE_STRING_8; a_action: like {WSF_URI_TEMPLATE_RESPONSE_AGENT_HANDLER}.action; rqst_methods: detachable WSF_REQUEST_METHODS)
+	map_agent_uri_template_response (a_uri_template: READABLE_STRING_8; a_action: like {WSF_URI_TEMPLATE_RESPONSE_AGENT_HANDLER}.action; a_request_methods: detachable WSF_REQUEST_METHODS)
 			-- See `map_agent_uri_template_response' class-feature notes (below).
 		note
 			purpose: "[
 				To map GET operation templates like "/users/{user}/{?op}" to features like `response_user'.
 				]"
 		do
-			router.map_with_request_methods (create {WSF_URI_TEMPLATE_MAPPING}.make (a_uri_template, create {WSF_URI_TEMPLATE_RESPONSE_AGENT_HANDLER}.make (a_action)), rqst_methods)
+			router.map_with_request_methods (create {WSF_URI_TEMPLATE_MAPPING}.make (a_uri_template, create {WSF_URI_TEMPLATE_RESPONSE_AGENT_HANDLER}.make (a_action)), a_request_methods)
 		end
 
 	map_uri_template (a_uri_template: READABLE_STRING_8; a_handler: WSF_URI_TEMPLATE_HANDLER; a_request_methods: detachable WSF_REQUEST_METHODS)

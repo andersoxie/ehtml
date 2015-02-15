@@ -152,6 +152,11 @@ feature -- Constants: Tag names
 
 	head_tag_name: STRING = "head"
 
+	heading_1_tag_name: STRING = "h1"
+	heading_2_tag_name: STRING = "h2"
+	heading_3_tag_name: STRING = "h3"
+	heading_4_tag_name: STRING = "h4"
+
 		-- I
 	input_tag_name: STRING = "input"
 
@@ -233,6 +238,7 @@ feature -- Codes
 			Result.force ("Danish", "da")
 			Result.force ("Dutch", "nl")
 			Result.force ("English", "en")
+			Result.force ("English-US", "en-US")
 			Result.force ("Esperanto", "eo")
 			Result.force ("Estonian", "et")
 			Result.force ("Faeroese", "fo")
@@ -349,7 +355,7 @@ feature -- Codes
 			Result.force ("Yoruba", "yo")
 			Result.force ("Zulu", "zu")
 		ensure
-			valid_count: Result.count = 145
+			valid_count: Result.count = 146
 		end
 
 note

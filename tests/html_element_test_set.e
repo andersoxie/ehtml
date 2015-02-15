@@ -15,6 +15,25 @@ inherit
 
 feature -- Test routines
 
+	w_three_schools_validator_test
+			-- Test generated HTML/CSS with W3-Schools
+		local
+			l_curl: CURL_EASY_EXTERNALS
+			l_page: TEST_HELLO_HOME_PAGE
+			l_string: CURL_STRING
+			l_result: INTEGER
+		do
+			create l_curl
+			create l_page
+			create l_string.make_empty
+			l_curl.setopt_string (l_curl.init, {CURL_OPT_CONSTANTS}.curlopt_url, "http://validator.w3.org")
+			l_result := l_curl.perform (l_curl.init)
+--			check is_not_malformed: l_result /= {CURL_CODES}.curle_url_malformat end
+--			assert_equals ("result_is_curle_ok", {CURL_CODES}.curle_ok, l_result)
+			l_curl.cleanup (l_curl.init)
+--			assert_strings_equal ("page", test_home_page, l_page.html + "%N")
+		end
+
 	test_empty_table
 			-- Test <table></table>.
 		local
@@ -164,6 +183,18 @@ feature -- Test routines
 		end
 
 feature {NONE} -- Implementation: Constants
+
+	test_home_page: STRING = "[
+	<body>
+	Hello / ahoj / &#2344;&#2350;&#2360;&#2381;&#2340;&#2375; / Ci&#224;o / &#1605;&#1585;&#1581;&#1576;&#1575; / Hola / &#20320;&#22909; / Hallo / Selam / Bonjour
+	<form action="/hello" method="GET">
+	<p>
+What is your full name?</p>
+	<input type="text"   name="user"/>
+	<input type="submit"   value="Validate"/>
+</form>
+</body>
+]"
 
 	empty_table: STRING = "<table></table>"
 			-- What an empty HTML-5 table looks like.
