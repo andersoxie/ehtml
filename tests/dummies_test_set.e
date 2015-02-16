@@ -102,6 +102,27 @@ feature -- Test routines
 			l_file.close
 		end
 
+	dummies_ch_4_definition_list
+			-- Definition List Test
+		note
+			testing:  "execution/isolated"
+			EIS: "name=basic_page", "protocol=URI", "tag=example",
+					"src=http://www.aharrisbooks.net/haio"
+			EIS: "name=basic_page", "protocol=URI", "tag=example",
+					"src=http://www.aharrisbooks.net/haio/book_1/chap_4/basicDL.html"
+			EIS: "name=basic_page_created", "protocol=URI", "tag=local_example",
+					"src=file:///$GITHUB/ehtml/tests/output/basicDL.html"
+		local
+			l_page: DUMMIES_CH_4_DEFINITION_LIST
+			l_file: RAW_FILE
+		do
+			create l_page
+			assert_strings_equal ("basicDL_page", basicDL, l_page.html)
+			create l_file.make_open_write (".\tests\output\basicDL.html")
+			l_file.put_string (l_page.html)
+			l_file.close
+		end
+
 feature {NONE} -- Test Constants
 
 	basic_page: STRING = "[
@@ -190,6 +211,27 @@ Max</li><li>
 Tiger</li><li>
 Sam</li><li>
 Misty</li></ol></li></ul></body></html>
+]"
+
+	basicDL: STRING = "[
+<!doctype >
+<html lang=en-US>
+<head>
+	<meta charset="UTF-8"
+</head>
+<body>
+<h1>
+Basic Definition List</h1><h2>
+Common Web Browsers</h2><dd>
+<dt>
+Mosaic</dt><dd>
+The mother of all modern browsers. The first widely used visual browser.</dd><dt>
+Netscape</dt><dd>
+The commercial successor to Mosaic. Widely popular, but eventually eclipsed by Internet Explorer</dd><dt>
+IE</dt><dd>
+Microsoft's entry into the browser market, and a dominant player.</dd><dt>
+Firefox</dt><dd>
+An open-source browser that has shaken up the world.</dd></dd></body></html>
 ]"
 
 ;note

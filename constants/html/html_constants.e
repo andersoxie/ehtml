@@ -138,6 +138,12 @@ feature -- Constants: Tag names
 
 		-- C
 		-- D
+	definition_list_tag_name: STRING = "dd"
+
+	definition_term_tag_name: STRING = "dt"
+
+	definition_definition_tag_name: STRING = "dd"
+
 		-- E
 		-- F
 	form_tag_name: STRING = "form"

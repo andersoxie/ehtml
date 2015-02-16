@@ -313,6 +313,19 @@ feature -- Access: Lists
 			Result := tag_contented (ordered_list_tag_name, Void, l_list_items, no_global_attributes, has_end_tag, not suppress_newlines)
 		end
 
+	definition_list (a_terms: ARRAY [TUPLE [term, definition: STRING]]): STRING
+			-- <dl> ... </dl>
+		local
+			l_list_items: STRING
+		do
+			create l_list_items.make_empty
+			across a_terms as ic_terms loop
+				l_list_items.append_string (tag_contented_no_global_attributes (definition_term_tag_name, no_manaul_attributes, ic_terms.item.term))
+				l_list_items.append_string (tag_contented_no_global_attributes (definition_definition_tag_name, no_manaul_attributes, ic_terms.item.definition))
+			end
+			Result := tag_contented (definition_list_tag_name, no_manaul_attributes, l_list_items, no_global_attributes, has_end_tag, not suppress_newlines)
+		end
+
 feature -- Access: <[tag]> ... </[tag]> w/Content
 
 	tag_contented_no_global_attributes (a_tag: STRING; a_manual_attributes: detachable STRING; a_content: STRING): STRING
