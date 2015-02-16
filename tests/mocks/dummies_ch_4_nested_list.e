@@ -39,7 +39,10 @@ feature {NONE} -- Implementation
 		do
 			l_content := factory.heading_1 ("Nested Lists")
 			l_content.append_string (factory.heading_2 ("Popular Cat Names"))
-			l_content.append_string (factory.unordered_list (<<"USA%N" + factory.ordered_list (<<"Tigger", "Tiger", "Max", "Smokey", "Sam">>), "Australia%N" + factory.ordered_list (<<"Oscar", "Max", "Tiger", "Sam", "Misty">>)>>))
+			l_content.append_string (factory.unordered_list (<<
+																	"USA%N%N" + factory.ordered_list (<<"Tigger", "Tiger", "Max", "Smokey", "Sam">>),
+																	"Australia%N%N" + factory.ordered_list (<<"Oscar", "Max", "Tiger", "Sam", "Misty">>)
+																>>))
 			Result := factory.tag_contented (body_tag_name, no_manaul_attributes, l_content, no_global_attributes, has_end_tag, not suppress_newlines)
 		end
 

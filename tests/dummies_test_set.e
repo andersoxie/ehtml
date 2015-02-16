@@ -173,6 +173,7 @@ Nested Lists</h1><h2>
 Popular Cat Names</h2><ul>
 <li>
 USA
+
 <ol>
 <li>
 Tigger</li><li>
@@ -181,6 +182,7 @@ Max</li><li>
 Smokey</li><li>
 Sam</li></ol></li><li>
 Australia
+
 <ol>
 <li>
 Oscar</li><li>
