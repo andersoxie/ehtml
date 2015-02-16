@@ -173,7 +173,7 @@ feature -- Constants: Tag names
 	op_parameter_keyword: STRING = "op"
 			-- Keyword for "op" (operation) parameter.
 
-	ordered_list_tag_name: STRING = "ul"
+	ordered_list_tag_name: STRING = "ol"
 
 		-- P
 	post_method_name: STRING = "POST"

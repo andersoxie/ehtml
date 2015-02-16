@@ -1,5 +1,7 @@
 note
-	description: "Summary description for {DUMMIES_CH_1_BASIC_PAGE}."
+	description: "[
+		Dummies Chapter 4 - Basic Page
+		]"
 	author: "Larry Rix"
 
 class

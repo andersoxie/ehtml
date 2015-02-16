@@ -1,11 +1,12 @@
 note
-	description: "Summary description for {DUMMIES_CH_4_BASICOL}."
+	description: "[
+		Dummies Chapter 4 - Basic Ordered List
+		]"
 	author: "Larry Rix"
 	EIS: "name=basic_page", "protocol=URI", "tag=example",
 			"src=http://www.aharrisbooks.net/haio"
 	EIS: "name=basic_page", "protocol=URI", "tag=example",
 			"src=http://www.aharrisbooks.net/haio/book_1/chap_4/basicOL.html"
-
 
 class
 	DUMMIES_CH_4_BASICOL

@@ -1,15 +1,15 @@
 note
 	description: "[
-		Dummies Chapter 4 - Basic Unordered List
+		Dummies Chapter 4 - Nested List
 		]"
 	author: "Larry Rix"
 	EIS: "name=basic_page", "protocol=URI", "tag=example",
 			"src=http://www.aharrisbooks.net/haio"
 	EIS: "name=basic_page", "protocol=URI", "tag=example",
-			"src=http://www.aharrisbooks.net/haio/book_1/chap_4/basicUL.html"
+			"src=http://www.aharrisbooks.net/haio/book_1/chap_4/nestedList.html"
 
 class
-	DUMMIES_CH_4_BASICUL
+	DUMMIES_CH_4_NESTED_LIST
 
 inherit
 	HTML_PAGE
@@ -28,7 +28,7 @@ feature -- Access
 	html: STRING
 			-- Main "Hello" web page HTML.
 		do
-			Result := factory.html_page (factory.head ("<meta charset=%"UTF-8%"%N<title>basicUL.html</title>") + "%N" + body, "en-US", "")
+			Result := factory.html_page (factory.head ("<meta charset=%"UTF-8%"") + "%N" + body, "en-US", "")
 		end
 
 feature {NONE} -- Implementation
@@ -37,9 +37,9 @@ feature {NONE} -- Implementation
 		local
 			l_content: STRING
 		do
-			l_content := factory.heading_1 ("Basic Lists")
-			l_content.append_string (factory.heading_2 ("Common Web Browsers"))
-			l_content.append_string (factory.unordered_list (<<"Firefox","Chrome","Internet Explorer","Opera","Safari">>))
+			l_content := factory.heading_1 ("Nested Lists")
+			l_content.append_string (factory.heading_2 ("Popular Cat Names"))
+			l_content.append_string (factory.unordered_list (<<"USA%N" + factory.ordered_list (<<"Tigger", "Tiger", "Max", "Smokey", "Sam">>), "Australia%N" + factory.ordered_list (<<"Oscar", "Max", "Tiger", "Sam", "Misty">>)>>))
 			Result := factory.tag_contented (body_tag_name, no_manaul_attributes, l_content, no_global_attributes, has_end_tag, not suppress_newlines)
 		end
 

@@ -75,8 +75,29 @@ feature -- Test routines
 			l_file: RAW_FILE
 		do
 			create l_page
-			assert_strings_equal ("basicUL_page", basicOL, l_page.html)
+			assert_strings_equal ("basicOL_page", basicOL, l_page.html)
 			create l_file.make_open_write (".\tests\output\basicOL.html")
+			l_file.put_string (l_page.html)
+			l_file.close
+		end
+
+	dummies_ch_4_nested_list
+			-- Nested List Test
+		note
+			testing:  "execution/isolated"
+			EIS: "name=basic_page", "protocol=URI", "tag=example",
+					"src=http://www.aharrisbooks.net/haio"
+			EIS: "name=basic_page", "protocol=URI", "tag=example",
+					"src=http://www.aharrisbooks.net/haio/book_1/chap_4/nestedList.html"
+			EIS: "name=basic_page_created", "protocol=URI", "tag=local_example",
+					"src=file:///$GITHUB/ehtml/tests/output/nestedlist.html"
+		local
+			l_page: DUMMIES_CH_4_NESTED_LIST
+			l_file: RAW_FILE
+		do
+			create l_page
+			assert_strings_equal ("nestedlist_page", nested_list, l_page.html)
+			create l_file.make_open_write (".\tests\output\nestedlist.html")
 			l_file.put_string (l_page.html)
 			l_file.close
 		end
@@ -138,6 +159,35 @@ Shadow</li><li>
 Sam</li><li>
 Lady</li></ul><p>
 data from http://www.bowwow.com.au</p></body></html>
+]"
+
+	nested_list: STRING = "[
+<!doctype >
+<html lang=en-US>
+<head>
+	<meta charset="UTF-8"
+</head>
+<body>
+<h1>
+Nested Lists</h1><h2>
+Popular Cat Names</h2><ul>
+<li>
+USA
+<ol>
+<li>
+Tigger</li><li>
+Tiger</li><li>
+Max</li><li>
+Smokey</li><li>
+Sam</li></ol></li><li>
+Australia
+<ol>
+<li>
+Oscar</li><li>
+Max</li><li>
+Tiger</li><li>
+Sam</li><li>
+Misty</li></ol></li></ul></body></html>
 ]"
 
 ;note
