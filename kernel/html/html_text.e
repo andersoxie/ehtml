@@ -38,6 +38,7 @@ feature {NONE} -- Initialization
 			-- Initialize Current with `a_text' for `text'.
 		do
 			text := a_text.twin
+			my_id := ""
 		ensure
 			text_set: text ~ a_text
 		end
@@ -45,7 +46,7 @@ feature {NONE} -- Initialization
 feature -- Access
 
 	tag: STRING
-			-- <tr> tag of Current.
+			-- No tag, only text.
 		once
 			create Result.make_empty
 		end
