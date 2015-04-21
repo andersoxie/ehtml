@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-13-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-13-0 http://www.eiffel.com/developers/xml/configuration-1-13-0.xsd" name="ehtml" uuid="C9115044-F077-4061-8F1E-9AD9E5521EE4">
+<system xmlns="http://www.eiffel.com/developers/xml/configuration-1-13-0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.eiffel.com/developers/xml/configuration-1-13-0 http://www.eiffel.com/developers/xml/configuration-1-13-0.xsd" name="ehtml" uuid="C9115044-F077-4061-8F1E-9AD9E5521EE4" library_target="ehtml">
 	<description>Eiffel HTML Library</description>
 	<target name="ehtml">
 		<root all_classes="true"/>
@@ -12,13 +12,13 @@
 			<exclude>/.git$</exclude>
 			<exclude>/tests$</exclude>
 		</file_rule>
-		<option warning="true" void_safety="transitional">
+		<option warning="true" void_safety="all">
 			<assertions precondition="true" postcondition="true" check="true" invariant="true" loop="true" supplier_precondition="true"/>
 		</option>
 		<library name="base" location="$ISE_LIBRARY\library\base\base-safe.ecf"/>
 		<library name="curl" location="$ISE_LIBRARY\library\curl\curl-safe.ecf"/>
 		<library name="default_nino" location="$ISE_EIFFEL\contrib\library\web\framework\ewf\wsf\default\nino-safe.ecf"/>
-		<library name="encoder" location="$ISE_USER_FILES\14.05\iron\packages\ewf\text\encoder\encoder-safe.ecf"/>
+		<library name="encoder" location="C:\Eiffel1405_win64\contrib\library\web\framework\ewf\text\encoder\encoder-safe.ecf"/>
 		<library name="gobo_regexp" location="$ISE_LIBRARY\library\gobo\gobo_regexp-safe.ecf"/>
 		<library name="http" location="$ISE_EIFFEL\contrib\library\network\protocol\http\http-safe.ecf"/>
 		<library name="wsf" location="$ISE_EIFFEL\contrib\library\web\framework\ewf\wsf\wsf-safe.ecf"/>
