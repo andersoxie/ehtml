@@ -34,6 +34,7 @@ feature {NONE} -- Initialization
 		do
 			Precursor
 			create internal_factory
+			my_id := ""
 		end
 
 	make_with_id (a_id: STRING)
@@ -41,10 +42,16 @@ feature {NONE} -- Initialization
 		do
 			default_create
 			add_attribute (["id", a_id, True])
+			my_id := a_id
 		end
+		my_id : STRING
 
 feature -- Access
 
+		id : STRING
+		do
+			Result := my_id
+		end
 	tag: STRING
 			-- HTML <tag> for Current.
 		deferred
@@ -62,6 +69,9 @@ feature -- Access
 				]"
 		do
 			a_parent.append_string (start_tag (tag, manual_attributes, global_attributes, not {HTML_CONSTANTS}.is_self_ending, True))
+			-- Since text most often is empty it is ok to add it. The reason that I want to have it is that it minimize the client code for for example a
+			-- button since I then do not need to add an HTML_TEXT element to it but can isntead only do a set_text call (even adding that to the creation method as an alternative).
+			a_parent.append_string (text)
 			content (a_parent)
 			a_parent.append_string (end_tag (tag))
 		end

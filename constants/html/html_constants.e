@@ -192,6 +192,7 @@ feature -- Constants: Tag names
 
 		-- R
 		-- S
+	script_tag_name: STRING = "script"
 		-- T
 	table_tag_name: STRING = "table"
 
